@@ -1,0 +1,21 @@
+packages:
+  "recharts": "Data visualization for statistics page"
+  "framer-motion": "Animations and page transitions"
+  "date-fns": "Date formatting and manipulation"
+  "react-hook-form": "Form state management"
+  "@hookform/resolvers": "Zod integration for forms"
+  "zod": "Schema validation"
+  "clsx": "Utility for Tailwind classes"
+  "tailwind-merge": "Utility for merging Tailwind classes"
+
+images:
+  - path: "artifacts/avisauto/public/images/auth-bg.png"
+    description: "Abstract professional sleek medical blue and green gradient background with glassmorphism shapes, highly detailed"
+    aspect_ratio: "16:9"
+  - path: "artifacts/avisauto/public/images/empty-reviews.png"
+    description: "Minimalist 3D illustration of a floating speech bubble with a star, soft lighting, professional SaaS aesthetic"
+    aspect_ratio: "1:1"
+
+notes:
+  - API relies on hooks generated from OpenAPI spec in @workspace/api-client-react
+  - React Query v5 is used
