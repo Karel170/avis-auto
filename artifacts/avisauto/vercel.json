@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+```
+
+**Ctrl+S** → ferme, puis :
+```
+cd c:\Users\paink\Desktop\avis-auto
+git add .
+git commit -m "Add Vercel config"
+git push
