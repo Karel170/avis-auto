@@ -285,6 +285,12 @@ export async function customFetch<T = unknown>(
 
   const headers = mergeHeaders(isRequest(input) ? input.headers : undefined, headersInit);
 
+  // Ajouter le token JWT si présent
+  const token = localStorage.getItem("avisauto_token");
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
   if (
     typeof init.body === "string" &&
     !headers.has("content-type") &&
@@ -299,7 +305,7 @@ export async function customFetch<T = unknown>(
 
   const requestInfo = { method, url: resolveUrl(input) };
 
-  const response = await fetch(input, { ...init, method, headers, credentials: "include" });
+  const response = await fetch(input, { ...init, method, headers });
 
   if (!response.ok) {
     const errorData = await parseErrorBody(response, method);

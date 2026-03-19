@@ -1,11 +1,11 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import { useLocation } from "wouter";
-import { 
-  useGetMe, 
-  useLogin, 
-  useLogout, 
+import {
+  useGetMe,
+  useLogin,
+  useLogout,
   useRegister,
-  User, 
+  User,
   Company,
   LoginRequest,
   RegisterRequest
@@ -34,22 +34,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { data, isLoading } = useGetMe({
     query: {
       retry: false,
-      staleTime: 1000 * 60 * 5, // 5 mins
+      staleTime: 1000 * 60 * 5,
     }
   });
 
   const loginMutation = useLogin({
     mutation: {
-      onSuccess: (data) => {
+      onSuccess: (data: any) => {
+        if (data.token) {
+          localStorage.setItem("avisauto_token", data.token);
+        }
         queryClient.setQueryData(["/api/auth/me"], data);
         toast({ title: "Connexion réussie", description: "Bienvenue sur AvisAuto!" });
         setLocation("/dashboard");
       },
       onError: (error: any) => {
-        toast({ 
-          title: "Erreur de connexion", 
-          description: error?.message || "Identifiants incorrects", 
-          variant: "destructive" 
+        toast({
+          title: "Erreur de connexion",
+          description: error?.message || "Identifiants incorrects",
+          variant: "destructive"
         });
       }
     }
@@ -57,16 +60,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const registerMutation = useRegister({
     mutation: {
-      onSuccess: (data) => {
+      onSuccess: (data: any) => {
+        if (data.token) {
+          localStorage.setItem("avisauto_token", data.token);
+        }
         queryClient.setQueryData(["/api/auth/me"], data);
         toast({ title: "Inscription réussie", description: "Votre compte a été créé avec succès." });
         setLocation("/dashboard");
       },
       onError: (error: any) => {
-        toast({ 
-          title: "Erreur d'inscription", 
-          description: error?.message || "Une erreur est survenue", 
-          variant: "destructive" 
+        toast({
+          title: "Erreur d'inscription",
+          description: error?.message || "Une erreur est survenue",
+          variant: "destructive"
         });
       }
     }
@@ -75,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logoutMutation = useLogout({
     mutation: {
       onSuccess: () => {
+        localStorage.removeItem("avisauto_token");
         queryClient.setQueryData(["/api/auth/me"], null);
         queryClient.clear();
         setLocation("/login");
