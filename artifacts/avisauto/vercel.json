@@ -1,1 +1,1 @@
-{"rewrites":[{"source":"/(.*)","destination":"/index.html"}]}
+{"rewrites":[{"source":"/api/(.*)","destination":"https://workspaceavisauto-production.up.railway.app/api/$1"},{"source":"/((?!api).*)","destination":"/index.html"}]}
