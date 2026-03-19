@@ -1,112 +1,93 @@
-import React, { createContext, useContext, ReactNode } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useLocation } from "wouter";
-import {
-  useGetMe,
-  useLogin,
-  useLogout,
-  useRegister,
-  User,
-  Company,
-  LoginRequest,
-  RegisterRequest
-} from "@workspace/api-client-react";
 import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
 
+interface User { id: string; email: string; name: string; role: string; }
+interface Company { id: string; name: string; }
 interface AuthContextType {
-  user: User | null;
-  company: Company | null;
-  isLoading: boolean;
-  login: (data: LoginRequest) => void;
-  register: (data: RegisterRequest) => void;
+  user: User | null; company: Company | null; isLoading: boolean;
+  login: (data: { email: string; password: string }) => void;
+  register: (data: { email: string; password: string; name: string; companyName?: string }) => void;
   logout: () => void;
-  isLoggingIn: boolean;
-  isRegistering: boolean;
+  isLoggingIn: boolean; isRegistering: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const API = "/api";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
-  const queryClient = useQueryClient();
+  const [user, setUser] = useState<User | null>(null);
+  const [company, setCompany] = useState<Company | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
 
-  const { data, isLoading } = useGetMe({
-    query: {
-      retry: false,
-      staleTime: 1000 * 60 * 5,
+  useEffect(() => {
+    const stored = localStorage.getItem("avisauto_user");
+    if (stored) {
+      const { user, company } = JSON.parse(stored);
+      setUser(user); setCompany(company);
     }
-  });
+    setIsLoading(false);
+  }, []);
 
-  const loginMutation = useLogin({
-    mutation: {
-      onSuccess: (data: any) => {
-        if (data.token) {
-          localStorage.setItem("avisauto_token", data.token);
-        }
-        queryClient.setQueryData(["/api/auth/me"], data);
-        toast({ title: "Connexion rÃ©ussie", description: "Bienvenue sur AvisAuto!" });
-        setLocation("/dashboard");
-      },
-      onError: (error: any) => {
-        toast({
-          title: "Erreur de connexion",
-          description: error?.message || "Identifiants incorrects",
-          variant: "destructive"
-        });
-      }
-    }
-  });
-
-  const registerMutation = useRegister({
-    mutation: {
-      onSuccess: (data: any) => {
-        if (data.token) {
-          localStorage.setItem("avisauto_token", data.token);
-        }
-        queryClient.setQueryData(["/api/auth/me"], data);
-        toast({ title: "Inscription rÃ©ussie", description: "Votre compte a Ã©tÃ© crÃ©Ã© avec succÃ¨s." });
-        setLocation("/dashboard");
-      },
-      onError: (error: any) => {
-        toast({
-          title: "Erreur d'inscription",
-          description: error?.message || "Une erreur est survenue",
-          variant: "destructive"
-        });
-      }
-    }
-  });
-
-  const logoutMutation = useLogout({
-    mutation: {
-      onSuccess: () => {
-        localStorage.removeItem("avisauto_token");
-        queryClient.setQueryData(["/api/auth/me"], null);
-        queryClient.clear();
-        setLocation("/login");
-      }
-    }
-  });
-
-  const value = {
-    user: data?.user || null,
-    company: data?.company || null,
-    isLoading,
-    login: loginMutation.mutate,
-    register: (values: any) => registerMutation.mutate({ data: values }),
-    logout: logoutMutation.mutate,
-    isLoggingIn: loginMutation.isPending,
-    isRegistering: registerMutation.isPending,
+  const login = async (data: { email: string; password: string }) => {
+    setIsLoggingIn(true);
+    try {
+      const res = await fetch(`${API}/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        credentials: "include"
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Erreur connexion");
+      localStorage.setItem("avisauto_user", JSON.stringify({ user: json.user, company: json.company }));
+      setUser(json.user); setCompany(json.company);
+      toast({ title: "Connexion réussie", description: "Bienvenue sur AvisAuto!" });
+      setLocation("/dashboard");
+    } catch (err: any) {
+      toast({ title: "Erreur de connexion", description: err.message, variant: "destructive" });
+    } finally { setIsLoggingIn(false); }
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  const register = async (data: any) => {
+    setIsRegistering(true);
+    try {
+      const res = await fetch(`${API}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        credentials: "include"
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Erreur inscription");
+      localStorage.setItem("avisauto_user", JSON.stringify({ user: json.user, company: json.company }));
+      setUser(json.user); setCompany(json.company);
+      toast({ title: "Inscription réussie", description: "Compte créé avec succès!" });
+      setLocation("/dashboard");
+    } catch (err: any) {
+      toast({ title: "Erreur d inscription", description: err.message, variant: "destructive" });
+    } finally { setIsRegistering(false); }
+  };
+
+  const logout = () => {
+    localStorage.removeItem("avisauto_user");
+    setUser(null); setCompany(null);
+    setLocation("/login");
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, company, isLoading, login, register, logout, isLoggingIn, isRegistering }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
   return context;
 }
