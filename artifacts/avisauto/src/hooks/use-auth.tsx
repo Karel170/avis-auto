@@ -45,6 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Erreur connexion");
       localStorage.setItem("avisauto_user", JSON.stringify({ user: json.user, company: json.company }));
+      if (json.token) localStorage.setItem("avisauto_token", json.token);
       setUser(json.user); setCompany(json.company);
       toast({ title: "Connexion réussie", description: "Bienvenue sur AvisAuto!" });
       setLocation("/dashboard");
@@ -65,6 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Erreur inscription");
       localStorage.setItem("avisauto_user", JSON.stringify({ user: json.user, company: json.company }));
+      if (json.token) localStorage.setItem("avisauto_token", json.token);
       setUser(json.user); setCompany(json.company);
       toast({ title: "Inscription réussie", description: "Compte créé avec succès!" });
       setLocation("/dashboard");
@@ -75,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("avisauto_user");
+    localStorage.removeItem("avisauto_token");
     setUser(null); setCompany(null);
     setLocation("/login");
   };
