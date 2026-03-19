@@ -61,3 +61,4 @@ router.get("/auth/me", async (req, res) => {
 });
 
 export default router;
+// JWT enabled
