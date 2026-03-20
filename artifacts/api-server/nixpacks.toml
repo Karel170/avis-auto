@@ -1,16 +1,6 @@
 [phases.setup]
 nixPkgs = ["nodejs"]
-
 [phases.install]
-cmds = ["npm install -g pnpm", "pnpm install --no-frozen-lockfile"]
-
+cmds = ["npm install express cors pg bcryptjs jsonwebtoken"]
 [start]
-cmd = "npx tsx src/index.ts"
-```
-
-**Ctrl+S** → ferme, puis :
-```
-cd ..\..
-git add .
-git commit -m "Add nixpacks config"
-git push
+cmd = "node src/server.js"
