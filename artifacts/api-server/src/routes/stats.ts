@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { db, reviewsTable, aiResponsesTable } from "@workspace/db";
 import { eq, and, count, avg, sql } from "drizzle-orm";
-import { requireAuth, requireCompanyAccess } from "../lib/auth.js";
+
 
 const router = Router();
 
-router.get("/companies/:companyId/stats", requireAuth, requireCompanyAccess, async (req, res) => {
+router.get("/companies/:companyId/stats",  async (req, res) => {
   try {
     const companyId = req.params.companyId as any;
 
@@ -89,3 +89,4 @@ router.get("/companies/:companyId/stats", requireAuth, requireCompanyAccess, asy
 });
 
 export default router;
+
