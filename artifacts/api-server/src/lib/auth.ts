@@ -1,23 +1,13 @@
 import type { Request, Response, NextFunction } from "express";
 import bcrypt from "bcryptjs";
-
-export async function hashPassword(password: string): Promise<string> {
-  return bcrypt.hash(password, 12);
+export async function hashPassword(p: string) { return bcrypt.hash(p, 12); }
+export async function verifyPassword(p: string, h: string) { return bcrypt.compare(p, h); }
+export function requireAuth(req: Request, res: Response, next: NextFunction) { 
+  console.log("requireAuth called - bypassed");
+  next(); 
 }
-
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  return bcrypt.compare(password, hash);
+export function requireAdmin(req: Request, res: Response, next: NextFunction) { next(); }
+export async function requireCompanyAccess(req: Request, res: Response, next: NextFunction) { 
+  console.log("requireCompanyAccess called - bypassed");
+  next(); 
 }
-
-export function requireAuth(req: Request, res: Response, next: NextFunction) {
-  next();
-}
-
-export function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  next();
-}
-
-export async function requireCompanyAccess(req: Request, res: Response, next: NextFunction) {
-  next();
-}
-// cache bust 03/20/2026 01:30:02
