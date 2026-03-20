@@ -2,24 +2,10 @@
   "$schema": "https://railway.app/railway.schema.json",
   "build": {
     "builder": "NIXPACKS",
-    "buildCommand": "npm install -g pnpm && pnpm install --no-frozen-lockfile"
+    "buildCommand": "npm install express cors pg bcryptjs jsonwebtoken"
   },
   "deploy": {
-    "startCommand": "npx tsx src/index.ts",
+    "startCommand": "node src/server.js",
     "restartPolicyType": "ON_FAILURE"
   }
 }
-```
-
-**Ctrl+S** → ferme, puis :
-```
-cd ..\..
-```
-```
-git add .
-```
-```
-git commit -m "Add railway config"
-```
-```
-git push
