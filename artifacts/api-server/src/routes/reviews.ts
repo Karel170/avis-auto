@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { db, reviewsTable, aiResponsesTable, companiesTable } from "@workspace/db";
 import { eq, and, sql, desc, gte, count } from "drizzle-orm";
-import { requireAuth, requireCompanyAccess } from "../lib/auth.js";
+import {  requireCompanyAccess } from "../lib/auth.js";
 import { generateAiResponse, detectSentiment, reformulateResponse } from "../lib/openai.js";
 import type { Tone, Length, Style } from "../lib/openai.js";
 
 const router = Router();
 
-router.get("/companies/:companyId/reviews", requireAuth, requireCompanyAccess, async (req, res) => {
+router.get("/companies/:companyId/reviews",  async (req, res) => {
   try {
     const companyId = req.params.companyId as any;
     const { status, sentiment, filter, page = "1", limit = "20" } = req.query;
@@ -80,11 +80,11 @@ router.get("/companies/:companyId/reviews", requireAuth, requireCompanyAccess, a
   }
 });
 
-router.get("/companies/:companyId/reviews/generate-all", requireAuth, requireCompanyAccess, async (req, res) => {
+router.get("/companies/:companyId/reviews/generate-all",  async (req, res) => {
   res.json({ message: "Use POST" });
 });
 
-router.post("/companies/:companyId/reviews/generate-all", requireAuth, requireCompanyAccess, async (req, res) => {
+router.post("/companies/:companyId/reviews/generate-all",  async (req, res) => {
   try {
     const companyId = req.params.companyId as any;
 
@@ -162,7 +162,7 @@ router.post("/companies/:companyId/reviews/generate-all", requireAuth, requireCo
   }
 });
 
-router.post("/companies/:companyId/reviews/publish-all", requireAuth, requireCompanyAccess, async (req, res) => {
+router.post("/companies/:companyId/reviews/publish-all",  async (req, res) => {
   try {
     const companyId = req.params.companyId as any;
 
@@ -200,7 +200,7 @@ router.post("/companies/:companyId/reviews/publish-all", requireAuth, requireCom
   }
 });
 
-router.get("/companies/:companyId/reviews/:reviewId", requireAuth, requireCompanyAccess, async (req, res) => {
+router.get("/companies/:companyId/reviews/:reviewId",  async (req, res) => {
   try {
     const reviewId = req.params.reviewId as any;
     const companyId = req.params.companyId as any;
@@ -229,7 +229,7 @@ router.get("/companies/:companyId/reviews/:reviewId", requireAuth, requireCompan
   }
 });
 
-router.post("/companies/:companyId/reviews/:reviewId/generate", requireAuth, requireCompanyAccess, async (req, res) => {
+router.post("/companies/:companyId/reviews/:reviewId/generate",  async (req, res) => {
   try {
     const reviewId = req.params.reviewId as any;
     const companyId = req.params.companyId as any;
@@ -298,7 +298,7 @@ router.post("/companies/:companyId/reviews/:reviewId/generate", requireAuth, req
   }
 });
 
-router.post("/companies/:companyId/reviews/:reviewId/reformulate", requireAuth, requireCompanyAccess, async (req, res) => {
+router.post("/companies/:companyId/reviews/:reviewId/reformulate",  async (req, res) => {
   try {
     const reviewId = req.params.reviewId as any;
     const companyId = req.params.companyId as any;
@@ -334,7 +334,7 @@ router.post("/companies/:companyId/reviews/:reviewId/reformulate", requireAuth, 
   }
 });
 
-router.post("/companies/:companyId/reviews/:reviewId/save-response", requireAuth, requireCompanyAccess, async (req, res) => {
+router.post("/companies/:companyId/reviews/:reviewId/save-response",  async (req, res) => {
   try {
     const reviewId = req.params.reviewId as any;
     const { finalText, status } = req.body;
@@ -374,7 +374,7 @@ router.post("/companies/:companyId/reviews/:reviewId/save-response", requireAuth
   }
 });
 
-router.post("/companies/:companyId/reviews/:reviewId/publish", requireAuth, requireCompanyAccess, async (req, res) => {
+router.post("/companies/:companyId/reviews/:reviewId/publish",  async (req, res) => {
   try {
     const reviewId = req.params.reviewId as any;
 
@@ -412,7 +412,7 @@ router.post("/companies/:companyId/reviews/:reviewId/publish", requireAuth, requ
   }
 });
 
-router.post("/companies/:companyId/reviews/:reviewId/mark-replied", requireAuth, requireCompanyAccess, async (req, res) => {
+router.post("/companies/:companyId/reviews/:reviewId/mark-replied",  async (req, res) => {
   try {
     const reviewId = req.params.reviewId as any;
 
@@ -429,3 +429,4 @@ router.post("/companies/:companyId/reviews/:reviewId/mark-replied", requireAuth,
 });
 
 export default router;
+

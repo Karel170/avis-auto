@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { db, aiResponsesTable, reviewsTable } from "@workspace/db";
 import { eq, and, count } from "drizzle-orm";
-import { requireAuth, requireCompanyAccess } from "../lib/auth.js";
+import {  requireCompanyAccess } from "../lib/auth.js";
 
 const router = Router();
 
-router.get("/companies/:companyId/ai-responses", requireAuth, requireCompanyAccess, async (req, res) => {
+router.get("/companies/:companyId/ai-responses",  async (req, res) => {
   try {
     const companyId = parseInt(req.params.companyId);
     const { status } = req.query;
@@ -36,3 +36,4 @@ router.get("/companies/:companyId/ai-responses", requireAuth, requireCompanyAcce
 });
 
 export default router;
+

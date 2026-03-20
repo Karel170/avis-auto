@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { db, subscriptionsTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
-import { requireAuth, requireCompanyAccess } from "../lib/auth.js";
+import {  requireCompanyAccess } from "../lib/auth.js";
 
 const router = Router();
 
-router.get("/companies/:companyId/subscription", requireAuth, requireCompanyAccess, async (req, res) => {
+router.get("/companies/:companyId/subscription",  async (req, res) => {
   try {
     const companyId = req.params.companyId as any;
 
@@ -27,7 +27,7 @@ router.get("/companies/:companyId/subscription", requireAuth, requireCompanyAcce
   }
 });
 
-router.post("/companies/:companyId/subscription/checkout", requireAuth, requireCompanyAccess, async (req, res) => {
+router.post("/companies/:companyId/subscription/checkout",  async (req, res) => {
   try {
     const { plan, billingPeriod } = req.body;
 
@@ -53,3 +53,4 @@ router.post("/webhooks/stripe", async (req, res) => {
 });
 
 export default router;
+

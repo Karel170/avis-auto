@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { db, companiesTable, reviewsTable, aiResponsesTable } from "@workspace/db";
 import { eq, and, sql } from "drizzle-orm";
-import { requireAuth, requireCompanyAccess } from "../lib/auth.js";
+
 import { fetchApifyReviews } from "../lib/apify.js";
 import { detectSentiment } from "../lib/openai.js";
 
 const router = Router();
 
-router.get("/companies/:companyId", requireAuth, requireCompanyAccess, async (req, res) => {
+router.get("/companies/:companyId",  async (req, res) => {
   try {
     const companyId = req.params.companyId as any;
     const companies = await db
@@ -28,7 +28,7 @@ router.get("/companies/:companyId", requireAuth, requireCompanyAccess, async (re
   }
 });
 
-router.put("/companies/:companyId", requireAuth, requireCompanyAccess, async (req, res) => {
+router.put("/companies/:companyId",  async (req, res) => {
   try {
     const companyId = req.params.companyId as any;
     const {
@@ -60,7 +60,7 @@ router.put("/companies/:companyId", requireAuth, requireCompanyAccess, async (re
   }
 });
 
-router.post("/companies/:companyId/sync", requireAuth, requireCompanyAccess, async (req, res) => {
+router.post("/companies/:companyId/sync",  async (req, res) => {
   try {
     const companyId = req.params.companyId as any;
 
@@ -132,3 +132,4 @@ router.post("/companies/:companyId/sync", requireAuth, requireCompanyAccess, asy
 });
 
 export default router;
+

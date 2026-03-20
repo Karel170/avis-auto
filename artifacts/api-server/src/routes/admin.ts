@@ -1,11 +1,11 @@
 import { Router } from "express";
 import { db, companiesTable, reviewsTable, aiResponsesTable, subscriptionsTable } from "@workspace/db";
 import { eq, count, avg, sql } from "drizzle-orm";
-import { requireAuth, requireAdmin } from "../lib/auth.js";
+import {  requireAdmin } from "../lib/auth.js";
 
 const router = Router();
 
-router.get("/admin/companies", requireAuth, requireAdmin, async (req, res) => {
+router.get("/admin/companies",  requireAdmin, async (req, res) => {
   try {
     const companies = await db.select().from(companiesTable);
 
@@ -57,7 +57,7 @@ router.get("/admin/companies", requireAuth, requireAdmin, async (req, res) => {
   }
 });
 
-router.get("/admin/stats", requireAuth, requireAdmin, async (req, res) => {
+router.get("/admin/stats",  requireAdmin, async (req, res) => {
   try {
     const [{ totalCompanies }] = await db
       .select({ totalCompanies: count() })
@@ -95,3 +95,4 @@ router.get("/admin/stats", requireAuth, requireAdmin, async (req, res) => {
 });
 
 export default router;
+
