@@ -1,12 +1,12 @@
 import express from "express";
 import cors from "cors";
-import pg from "pg";
+import pkg from "pg"; const { Pool } = pkg;
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const app = express();
 const JWT_SECRET = process.env.JWT_SECRET || "avisauto-dev-secret";
-const db = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+const db = new Pool({ connectionString: process.env.DATABASE_URL });
 
 app.set("trust proxy", 1);
 app.use(cors({ origin: ["https://avis-auto-avisauto.vercel.app", "http://localhost:5173"], credentials: true, methods: ["GET","POST","PUT","DELETE","OPTIONS"], allowedHeaders: ["Content-Type","Authorization"] }));
@@ -102,3 +102,4 @@ app.post("/api/companies/:id/sync", auth, async (req, res) => {
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Server on port ${port}`));
+
