@@ -155,7 +155,7 @@ export default function Subscription() {
                 <h3 className="text-lg font-bold text-white">{plan.name}</h3>
                 <div className="flex items-baseline gap-1 mt-1">
                   <span className="text-3xl font-bold text-white">{plan.price}€</span>
-                  <span className="text-slate-400 text-sm">/mois</span>
+                  <span className="text-slate-400 text-sm">/mois HT</span>
                 </div>
               </div>
 
@@ -204,6 +204,9 @@ export default function Subscription() {
 
       <p className="text-center text-xs text-slate-500 mt-6">
         Sans engagement · Annulable à tout moment · Paiement sécurisé par Stripe
+      </p>
+      <p className="text-center text-xs text-slate-600 mt-2">
+        TVA non applicable, art. 293 B du CGI
       </p>
     </div>
   );

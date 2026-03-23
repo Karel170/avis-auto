@@ -252,7 +252,7 @@ export default function Pricing() {
                     <span className="text-5xl font-bold text-white">{plan.price}€</span>
                     <span className="text-slate-400 text-sm">/mois</span>
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">HT &middot; Facturation mensuelle</p>
+                  <p className="text-xs text-slate-500 mt-1">HT &middot; Facturation mensuelle &middot; TVA non applicable, art. 293 B du CGI</p>
                 </div>
 
                 <ul className="space-y-2.5 mb-8 flex-1">
@@ -318,7 +318,7 @@ export default function Pricing() {
             </div>
             <div className="flex flex-col items-center sm:items-end gap-3 flex-shrink-0">
               <div className="text-right">
-                <div className="text-3xl font-bold text-white">39€</div>
+                <div className="text-3xl font-bold text-white">39€ HT</div>
                 <div className="text-xs text-slate-500">paiement unique</div>
               </div>
               <button
