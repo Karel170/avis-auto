@@ -179,16 +179,14 @@ function HeroSection() {
           </Link>
         </div>
 
-        {/* Scroll indicator */}
+        {/* Demo button */}
         <div className="animate-fade-up-4 flex flex-col items-center gap-2 mb-10">
           <button
             onClick={scrollToDemo}
-            className="flex flex-col items-center gap-1.5 text-slate-500 hover:text-blue-400 transition-colors duration-200 group"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-600 hover:border-blue-500/60 bg-slate-900/60 hover:bg-blue-500/10 text-slate-300 hover:text-white transition-all duration-200 text-sm font-medium"
           >
-            <span className="text-xs font-medium tracking-wide uppercase group-hover:text-blue-400 transition-colors">Voir la démo</span>
-            <div className="animate-bounce-slow w-8 h-8 rounded-full border border-slate-700 group-hover:border-blue-500/50 flex items-center justify-center transition-colors">
-              <ChevronDown className="w-4 h-4" />
-            </div>
+            <ChevronDown className="w-4 h-4 animate-bounce" />
+            Voir la démo
           </button>
         </div>
 

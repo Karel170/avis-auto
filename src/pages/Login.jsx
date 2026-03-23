@@ -9,11 +9,13 @@ import { getErrorMessage } from '../lib/utils';
 export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   const login = useAuthStore((s) => s.login);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     setLoading(true);
     try {
       const res = await authApi.login(form);
@@ -21,7 +23,7 @@ export default function Login() {
       toast.success('Connexion réussie !');
       navigate('/dashboard');
     } catch (err) {
-      toast.error(getErrorMessage(err));
+      setError(getErrorMessage(err) || 'Email ou mot de passe incorrect');
     } finally {
       setLoading(false);
     }
@@ -79,7 +81,13 @@ export default function Login() {
               </div>
             </div>
 
-            <button type="submit" className="btn-primary w-full justify-center mt-6" disabled={loading}>
+            {error && (
+              <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                <span className="text-sm text-red-400">{error}</span>
+              </div>
+            )}
+
+            <button type="submit" className="btn-primary w-full justify-center mt-2" disabled={loading}>
               {loading ? (
                 <><Loader2 className="w-4 h-4 animate-spin" /> Connexion...</>
               ) : (
