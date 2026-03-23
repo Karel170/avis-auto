@@ -183,9 +183,9 @@ function HeroSection() {
         <div className="animate-fade-up-4 flex flex-col items-center gap-2 mb-10">
           <button
             onClick={scrollToDemo}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-slate-600 hover:border-blue-500/60 bg-slate-900/60 hover:bg-blue-500/10 text-slate-300 hover:text-white transition-all duration-200 text-sm font-medium"
+            className="flex items-center gap-2 px-6 py-3 rounded-xl border-2 border-blue-500/60 bg-blue-600/15 hover:bg-blue-600/25 text-blue-300 hover:text-white transition-all duration-200 text-base font-semibold shadow-lg shadow-blue-900/20"
           >
-            <ChevronDown className="w-4 h-4 animate-bounce" />
+            <ChevronDown className="w-5 h-5 animate-bounce" />
             Voir la démo
           </button>
         </div>
