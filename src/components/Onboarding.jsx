@@ -11,7 +11,7 @@ import useAuthStore from '../store/authStore';
 import { TONES, SECTORS, getErrorMessage } from '../lib/utils';
 import { cn } from '../lib/utils';
 
-const SETUP_PRICE = '149€';
+const SETUP_PRICE = '39€';
 const SETUP_CONTACT = 'contact@avisauto.fr'; // à adapter
 
 function StepIndicator({ current, total }) {
