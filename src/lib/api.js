@@ -81,4 +81,14 @@ export const stripeApi = {
     api.post('/api/stripe/create-portal', { company_id: companyId }),
 };
 
+export const googleApi = {
+  getAuthUrl: (companyId, token) =>
+    `${API_URL}/api/google/auth?company_id=${encodeURIComponent(companyId)}&token=${encodeURIComponent(token)}`,
+  getStatus: (companyId) => api.get('/api/google/status', { params: { company_id: companyId } }),
+  getLocations: (companyId) => api.get('/api/google/locations', { params: { company_id: companyId } }),
+  selectLocation: (data) => api.post('/api/google/select-location', data),
+  publishReply: (data) => api.post('/api/google/publish-reply', data),
+  disconnect: (companyId) => api.delete('/api/google/disconnect', { params: { company_id: companyId } }),
+};
+
 export default api;
