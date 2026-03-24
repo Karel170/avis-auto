@@ -489,8 +489,8 @@ export default function Settings() {
             <div className="flex items-center gap-3 p-4 bg-amber-500/5 border border-amber-500/20 rounded-lg">
               <Lock className="w-5 h-5 text-amber-400 flex-shrink-0" />
               <div>
-                <p className="text-sm font-medium text-amber-300">Réservé aux plans Pro et Business</p>
-                <p className="text-xs text-slate-500 mt-0.5">Passez à un plan supérieur pour publier sur Google Maps automatiquement.</p>
+                <p className="text-sm font-medium text-amber-300">Réservé au plan Business</p>
+                <p className="text-xs text-slate-500 mt-0.5">Passez au plan Business (149€/mois) pour publier vos réponses directement sur Google Maps.</p>
               </div>
             </div>
           ) : !googleStatus?.connected ? (
