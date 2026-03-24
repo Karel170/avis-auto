@@ -16,6 +16,7 @@ const Landing = lazy(() => import('./pages/Landing'));
 const Legal = lazy(() => import('./pages/Legal'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Subscription = lazy(() => import('./pages/Subscription'));
+const Insights = lazy(() => import('./pages/Insights'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 function PageLoader() {
@@ -62,6 +63,7 @@ export default function App() {
         >
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="reviews" element={<Reviews />} />
+          <Route path="insights" element={<Insights />} />
           <Route path="settings" element={<Settings />} />
           <Route path="subscription" element={<Subscription />} />
         </Route>

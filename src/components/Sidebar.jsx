@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, MessageSquare, Settings, LogOut, Star,
-  Building2, X, ChevronDown, Plus, CreditCard, LifeBuoy
+  Building2, X, ChevronDown, Plus, CreditCard, LifeBuoy, BarChart2
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import useAuthStore from '../store/authStore';
@@ -159,6 +159,7 @@ export default function Sidebar({ isOpen, onClose }) {
           {[
             { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
             { to: '/reviews', icon: MessageSquare, label: 'Avis', badge: pendingCount },
+            { to: '/insights', icon: BarChart2, label: 'Insights' },
             { to: '/settings', icon: Settings, label: 'Paramètres' },
             { to: '/subscription', icon: CreditCard, label: 'Abonnement' },
           ].map(({ to, icon: Icon, label, badge }) => (

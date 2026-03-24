@@ -53,6 +53,7 @@ export const companiesApi = {
     api.post(`/api/companies/${companyId}/responses/publish-all`),
   exportCSV: (companyId) =>
     api.get(`/api/companies/${companyId}/reviews/export`, { responseType: 'blob' }),
+  analyse: (companyId) => api.post(`/api/companies/${companyId}/analyse`),
 };
 
 // Stripe / subscription API
