@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import {
   Star, Zap, MessageSquare, Settings2, SlidersHorizontal,
   RefreshCw, Download, ArrowRight, CheckCircle, Shield, Clock,
-  BarChart3, Sparkles, ChevronRight, ChevronDown, TrendingUp, Bell
+  BarChart3, Sparkles, ChevronRight, ChevronDown, TrendingUp, Bell, Loader2
 } from 'lucide-react';
+import { cn } from '../lib/utils';
 
 const features = [
   {
@@ -430,77 +431,158 @@ function StatsSection() {
   );
 }
 
-// Replace DEMO_VIDEO_URL with your YouTube/Loom embed URL when ready
-const DEMO_VIDEO_URL = '';
+const DEMO_RESPONSE = "Bonjour Marie, nous sommes sincèrement navrés de votre expérience. L'attente et la qualité d'accueil sont des points que nous prenons très au sérieux et sur lesquels nous nous engageons à progresser. N'hésitez pas à nous contacter directement au comptoir. — L'équipe Pharmacie Clément";
+
+function AnimatedDemoPlayer() {
+  const [step, setStep] = useState(0);
+  // 0=idle 1=loading 2=typing 3=done 4=published
+  const [displayedText, setDisplayedText] = useState('');
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setStep(1), 1800);
+    const t2 = setTimeout(() => setStep(2), 3400);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+
+  useEffect(() => {
+    if (step !== 2) return;
+    let i = 0;
+    const id = setInterval(() => {
+      i++;
+      setDisplayedText(DEMO_RESPONSE.slice(0, i));
+      if (i >= DEMO_RESPONSE.length) {
+        clearInterval(id);
+        setTimeout(() => setStep(3), 400);
+      }
+    }, 16);
+    return () => clearInterval(id);
+  }, [step]);
+
+  useEffect(() => {
+    if (step === 3) {
+      const t = setTimeout(() => setStep(4), 1800);
+      return () => clearTimeout(t);
+    }
+  }, [step]);
+
+  return (
+    <div className="p-5">
+      {/* Review card */}
+      <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-4 mb-3">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+            <span className="text-red-400 text-sm font-bold">M</span>
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-slate-200">Marie D.</p>
+            <div className="flex gap-0.5 mt-0.5">
+              {[1,2,3,4,5].map(s => (
+                <span key={s} className={s <= 1 ? 'text-amber-400 text-xs' : 'text-slate-700 text-xs'}>★</span>
+              ))}
+            </div>
+          </div>
+          <span className="text-xs px-2 py-0.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-full">Négatif</span>
+        </div>
+        <p className="text-sm text-slate-300 italic leading-relaxed">
+          "Temps d'attente bien trop long, personnel peu aimable. Je ne reviendrai pas de sitôt."
+        </p>
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-700/30">
+          <span className="text-xs bg-slate-900/80 border border-slate-700 text-slate-400 rounded-md px-2 py-1.5">Professionnel</span>
+          <button className={cn(
+            'flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md font-medium transition-all duration-200',
+            step === 0 && 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 ring-2 ring-blue-400/40',
+            step === 1 && 'bg-blue-600/70 text-white scale-95',
+            step >= 2 && 'bg-slate-700 text-slate-400',
+          )}>
+            {step === 1
+              ? <><Loader2 className="w-3 h-3 animate-spin" /> Génération...</>
+              : <><Sparkles className="w-3 h-3" /> {step === 0 ? 'Générer' : 'Regénérer'}</>
+            }
+          </button>
+        </div>
+      </div>
+
+      {/* AI Response */}
+      {step >= 2 && (
+        <div className={cn(
+          'border rounded-xl p-4 transition-all duration-500',
+          step >= 4 ? 'bg-emerald-500/5 border-emerald-500/25' : 'bg-slate-800/40 border-blue-500/20'
+        )}>
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+            <span className="text-xs font-medium text-blue-400">Réponse générée par IA</span>
+            {step >= 4 && (
+              <span className="ml-auto flex items-center gap-1 text-xs px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full">
+                <CheckCircle className="w-3 h-3" /> Publié sur Google Maps
+              </span>
+            )}
+          </div>
+          <p className="text-sm text-slate-300 leading-relaxed">
+            {displayedText}
+            {step === 2 && <span className="inline-block w-0.5 h-[14px] bg-blue-400 animate-pulse ml-0.5 align-middle" />}
+          </p>
+          {step === 3 && (
+            <div className="flex justify-end mt-3 pt-3 border-t border-slate-700/30">
+              <div className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-lg font-medium bg-emerald-600 text-white animate-pulse">
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#fff"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#fff"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#fff"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#fff"/>
+                </svg>
+                Publier sur Google Maps
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function DemoSection() {
-  const [playing, setPlaying] = useState(false);
+  const [loopKey, setLoopKey] = useState(0);
+  const loopDuration = 1800 + 1600 + DEMO_RESPONSE.length * 16 + 400 + 1800 + 3000;
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoopKey(k => k + 1), loopDuration);
+    return () => clearTimeout(t);
+  }, [loopKey]);
 
   return (
     <section className="py-20 px-4 sm:px-6">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-2xl mx-auto">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm mb-4">
             <Sparkles className="w-3.5 h-3.5" />
-            Démo en 2 minutes
+            Démo en direct
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
             Voyez AvisAuto en action
           </h2>
           <p className="text-slate-400 text-lg max-w-xl mx-auto">
-            De l'import des avis à la réponse publiée sur Google Maps — en moins de 30 secondes.
+            De l'avis négatif à la réponse publiée sur Google Maps — en moins de 30 secondes.
           </p>
         </div>
 
-        <div className="relative rounded-2xl overflow-hidden border border-slate-700/60 shadow-2xl shadow-blue-900/20 bg-slate-900 aspect-video">
-          {DEMO_VIDEO_URL && playing ? (
-            <iframe
-              src={`${DEMO_VIDEO_URL}?autoplay=1`}
-              className="w-full h-full"
-              frameBorder="0"
-              allow="autoplay; fullscreen"
-              allowFullScreen
-            />
-          ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-              {/* Fake UI preview */}
-              <div className="absolute inset-0 opacity-20 overflow-hidden pointer-events-none select-none">
-                <div className="flex h-full">
-                  <div className="w-14 bg-slate-900 border-r border-slate-700 flex flex-col items-center py-4 gap-3">
-                    <div className="w-7 h-7 bg-blue-600 rounded-md" />
-                    {[...Array(4)].map((_, i) => <div key={i} className="w-6 h-6 bg-slate-700 rounded-md" />)}
-                  </div>
-                  <div className="flex-1 p-4 space-y-3">
-                    <div className="h-6 w-40 bg-slate-700 rounded-md" />
-                    <div className="grid grid-cols-4 gap-2">
-                      {[...Array(4)].map((_, i) => <div key={i} className="h-16 bg-slate-800 rounded-xl border border-slate-700" />)}
-                    </div>
-                    {[...Array(3)].map((_, i) => <div key={i} className="h-20 bg-slate-800 rounded-xl border border-slate-700" />)}
-                  </div>
-                </div>
-              </div>
-              {/* Play button */}
-              <button
-                onClick={() => DEMO_VIDEO_URL ? setPlaying(true) : null}
-                className={`relative z-10 group flex flex-col items-center gap-4 ${!DEMO_VIDEO_URL ? 'cursor-default' : 'cursor-pointer'}`}
-              >
-                <div className="w-20 h-20 bg-blue-600 group-hover:bg-blue-500 rounded-full flex items-center justify-center shadow-xl shadow-blue-900/50 transition-all duration-300 group-hover:scale-110">
-                  <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-                <span className="text-slate-300 text-sm font-medium">
-                  {DEMO_VIDEO_URL ? 'Lancer la démo' : 'Démo vidéo — Bientôt disponible'}
-                </span>
-              </button>
+        <div className="rounded-2xl overflow-hidden border border-slate-700/60 shadow-2xl shadow-blue-900/20 bg-slate-900">
+          <div className="flex items-center gap-3 px-4 py-3 bg-slate-800/80 border-b border-slate-700/50">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-500/50" />
+              <div className="w-3 h-3 rounded-full bg-amber-500/50" />
+              <div className="w-3 h-3 rounded-full bg-emerald-500/50" />
             </div>
-          )}
+            <div className="flex-1 mx-2 bg-slate-700/60 rounded-md px-3 py-1 text-xs text-slate-500 text-center">
+              app.avisauto.app/reviews
+            </div>
+          </div>
+          <AnimatedDemoPlayer key={loopKey} />
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-sm text-slate-500">
-          <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-blue-400" /> 2 minutes chrono</div>
-          <div className="flex items-center gap-2"><Zap className="w-4 h-4 text-amber-400" /> Sans inscription</div>
-          <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> Cas réel</div>
+          <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-blue-400" /> Moins de 30 secondes</div>
+          <div className="flex items-center gap-2"><Zap className="w-4 h-4 text-amber-400" /> 100% automatique</div>
+          <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> Publié sur Google Maps</div>
         </div>
       </div>
     </section>
