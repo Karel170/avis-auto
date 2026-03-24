@@ -9,12 +9,12 @@ export default function NotFound() {
     <div className="min-h-screen bg-slate-950 flex items-center justify-center p-6">
       <div className="text-center max-w-md">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2.5 mb-10">
+        <Link to="/" className="inline-flex items-center gap-2.5 mb-10 hover:opacity-80 transition-opacity">
           <div className="w-9 h-9 bg-blue-600 rounded-xl flex items-center justify-center">
             <Star className="w-5 h-5 text-white" fill="white" />
           </div>
           <span className="text-xl font-bold text-white tracking-tight">AvisAuto</span>
-        </div>
+        </Link>
 
         {/* 404 */}
         <div className="text-8xl font-black text-slate-800 mb-4 select-none leading-none">

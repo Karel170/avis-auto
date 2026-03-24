@@ -63,10 +63,12 @@ export default function ResetPassword() {
       <div className="w-full max-w-md relative">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-600/30">
-            <Star className="w-7 h-7 text-white" fill="white" />
-          </div>
-          <h1 className="text-2xl font-bold text-white">AvisAuto</h1>
+          <Link to="/" className="inline-flex flex-col items-center group">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-blue-600 rounded-2xl mb-4 shadow-lg shadow-blue-600/30 group-hover:bg-blue-500 transition-colors">
+              <Star className="w-7 h-7 text-white" fill="white" />
+            </div>
+            <h1 className="text-2xl font-bold text-white">AvisAuto</h1>
+          </Link>
           <p className="text-slate-400 mt-1">Choisir un nouveau mot de passe</p>
         </div>
 

@@ -227,12 +227,12 @@ export default function Legal() {
       {/* Header */}
       <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center">
               <Star className="w-3.5 h-3.5 text-white" fill="white" />
             </div>
             <span className="font-bold text-white">AvisAuto</span>
-          </div>
+          </Link>
           <Link
             to="/"
             className="flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors"
