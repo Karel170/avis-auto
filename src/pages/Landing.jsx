@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Star, Zap, MessageSquare, Settings2, SlidersHorizontal,
@@ -40,10 +40,26 @@ const features = [
 ];
 
 const stats = [
-  { value: '181', label: 'avis importés en moyenne', suffix: '' },
-  { value: '< 30', label: 'secondes par réponse', suffix: 's' },
-  { value: '5x', label: 'plus rapide qu\'à la main', suffix: '' },
+  { value: 1840, label: 'avis traités sur la plateforme', suffix: '+', prefix: '' },
+  { value: 30, label: 'secondes par réponse', suffix: 's', prefix: '< ' },
+  { value: 5, label: 'plus rapide qu\'à la main', suffix: 'x', prefix: '' },
 ];
+
+function useCountUp(target, duration = 1800, start = false) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    if (!start) return;
+    let startTime = null;
+    const step = (timestamp) => {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      setCount(Math.floor(progress * target));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [start, target, duration]);
+  return count;
+}
 
 const pricingPlans = [
   {
@@ -373,21 +389,118 @@ function HeroSection() {
   );
 }
 
-function StatsSection() {
+function StatCounter({ stat, started }) {
+  const count = useCountUp(stat.value, 1800, started);
   return (
-    <section className="py-16 px-4 sm:px-6 border-y border-slate-800/60 relative overflow-hidden">
+    <div className="text-4xl sm:text-5xl font-bold text-white mb-2">
+      <span className="text-blue-400">{stat.prefix}</span>
+      {started ? count.toLocaleString('fr-FR') : '0'}
+      <span className="text-blue-400">{stat.suffix}</span>
+    </div>
+  );
+}
+
+function StatsSection() {
+  const ref = useRef(null);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setStarted(true); observer.disconnect(); } },
+      { threshold: 0.3 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <section ref={ref} className="py-16 px-4 sm:px-6 border-y border-slate-800/60 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-transparent to-blue-600/5 pointer-events-none" />
       <div className="max-w-4xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
           {stats.map((stat, i) => (
             <div key={stat.label} className={`animate-fade-up-${i + 1}`}>
-              <div className="text-4xl sm:text-5xl font-bold text-white mb-2">
-                {stat.value}
-                <span className="text-blue-400">{stat.suffix}</span>
-              </div>
+              <StatCounter stat={stat} started={started} />
               <p className="text-slate-400">{stat.label}</p>
             </div>
           ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// Replace DEMO_VIDEO_URL with your YouTube/Loom embed URL when ready
+const DEMO_VIDEO_URL = '';
+
+function DemoSection() {
+  const [playing, setPlaying] = useState(false);
+
+  return (
+    <section className="py-20 px-4 sm:px-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm mb-4">
+            <Sparkles className="w-3.5 h-3.5" />
+            Démo en 2 minutes
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            Voyez AvisAuto en action
+          </h2>
+          <p className="text-slate-400 text-lg max-w-xl mx-auto">
+            De l'import des avis à la réponse publiée sur Google Maps — en moins de 30 secondes.
+          </p>
+        </div>
+
+        <div className="relative rounded-2xl overflow-hidden border border-slate-700/60 shadow-2xl shadow-blue-900/20 bg-slate-900 aspect-video">
+          {DEMO_VIDEO_URL && playing ? (
+            <iframe
+              src={`${DEMO_VIDEO_URL}?autoplay=1`}
+              className="w-full h-full"
+              frameBorder="0"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+            />
+          ) : (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+              {/* Fake UI preview */}
+              <div className="absolute inset-0 opacity-20 overflow-hidden pointer-events-none select-none">
+                <div className="flex h-full">
+                  <div className="w-14 bg-slate-900 border-r border-slate-700 flex flex-col items-center py-4 gap-3">
+                    <div className="w-7 h-7 bg-blue-600 rounded-md" />
+                    {[...Array(4)].map((_, i) => <div key={i} className="w-6 h-6 bg-slate-700 rounded-md" />)}
+                  </div>
+                  <div className="flex-1 p-4 space-y-3">
+                    <div className="h-6 w-40 bg-slate-700 rounded-md" />
+                    <div className="grid grid-cols-4 gap-2">
+                      {[...Array(4)].map((_, i) => <div key={i} className="h-16 bg-slate-800 rounded-xl border border-slate-700" />)}
+                    </div>
+                    {[...Array(3)].map((_, i) => <div key={i} className="h-20 bg-slate-800 rounded-xl border border-slate-700" />)}
+                  </div>
+                </div>
+              </div>
+              {/* Play button */}
+              <button
+                onClick={() => DEMO_VIDEO_URL ? setPlaying(true) : null}
+                className={`relative z-10 group flex flex-col items-center gap-4 ${!DEMO_VIDEO_URL ? 'cursor-default' : 'cursor-pointer'}`}
+              >
+                <div className="w-20 h-20 bg-blue-600 group-hover:bg-blue-500 rounded-full flex items-center justify-center shadow-xl shadow-blue-900/50 transition-all duration-300 group-hover:scale-110">
+                  <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </div>
+                <span className="text-slate-300 text-sm font-medium">
+                  {DEMO_VIDEO_URL ? 'Lancer la démo' : 'Démo vidéo — Bientôt disponible'}
+                </span>
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-sm text-slate-500">
+          <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-blue-400" /> 2 minutes chrono</div>
+          <div className="flex items-center gap-2"><Zap className="w-4 h-4 text-amber-400" /> Sans inscription</div>
+          <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> Cas réel</div>
         </div>
       </div>
     </section>
@@ -533,7 +646,7 @@ function ExampleSection() {
 function TestimonialsSection() {
   const testimonials = [
     {
-      name: "Clément B.",
+      name: "Clément RP.",
       role: "Gérant — Pharmacie",
       avatar: "C",
       color: "violet",
@@ -756,6 +869,7 @@ export default function Landing() {
       <NavBar />
       <HeroSection />
       <StatsSection />
+      <DemoSection />
       <FeaturesSection />
       <ExampleSection />
       <TestimonialsSection />
