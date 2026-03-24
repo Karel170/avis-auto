@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Star, Zap, MessageSquare, Settings2, SlidersHorizontal,
   RefreshCw, Download, ArrowRight, CheckCircle, Shield, Clock,
-  BarChart3, Sparkles, ChevronRight, ChevronDown, TrendingUp, Bell
+  BarChart3, Sparkles, ChevronRight, ChevronDown, TrendingUp, Bell, Quote
 } from 'lucide-react';
 
 const features = [
@@ -426,6 +427,186 @@ function FeaturesSection() {
   );
 }
 
+function ExampleSection() {
+  const [active, setActive] = useState(0);
+
+  const examples = [
+    {
+      rating: 5,
+      review: "Très bonne expérience, personnel accueillant et service rapide. Je recommande vivement !",
+      author: "Marie L.",
+      response: "Merci infiniment pour ce retour si positif, Marie ! C'est une vraie joie de savoir que vous vous êtes sentie bien accueillie et que le service a été à la hauteur de vos attentes. Toute l'équipe sera ravie de vous retrouver très bientôt ! 😊",
+      tag: "Avis 5 étoiles",
+      tagColor: "emerald",
+    },
+    {
+      rating: 2,
+      review: "Attente trop longue en caisse et personnel peu disponible. Déçu par cette visite.",
+      author: "Thomas R.",
+      response: "Bonjour Thomas, nous sommes sincèrement désolés pour cette expérience décevante. L'attente en caisse et la disponibilité de notre équipe sont des points sur lesquels nous travaillons activement. Votre retour nous aide à progresser — n'hésitez pas à nous recontacter directement pour que nous puissions faire mieux lors de votre prochaine visite.",
+      tag: "Avis négatif",
+      tagColor: "red",
+    },
+    {
+      rating: 4,
+      review: "Bonne qualité dans l'ensemble, quelques petits détails à améliorer mais je reviendrai.",
+      author: "Sophie M.",
+      response: "Merci pour votre avis constructif, Sophie ! Nous sommes heureux que votre expérience ait été globalement positive. Vos remarques sur les petits détails sont précieuses et nous allons en tenir compte. À très bientôt pour une visite encore meilleure ! 🌟",
+      tag: "Avis mitigé",
+      tagColor: "amber",
+    },
+  ];
+
+  const ex = examples[active];
+
+  return (
+    <section className="py-20 px-4 sm:px-6">
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm mb-4">
+            <Sparkles className="w-3.5 h-3.5" />
+            Exemple concret
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            Voyez ce qu'AvisAuto génère
+          </h2>
+          <p className="text-slate-400 text-lg max-w-xl mx-auto">
+            Des réponses naturelles, adaptées à chaque avis. En moins de 30 secondes.
+          </p>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-2 justify-center mb-8 flex-wrap">
+          {examples.map((e, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                active === i
+                  ? e.tagColor === 'emerald' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                  : e.tagColor === 'red' ? 'bg-red-500/20 text-red-400 border border-red-500/40'
+                  : 'bg-amber-500/20 text-amber-400 border border-amber-500/40'
+                  : 'bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-600'
+              }`}
+            >
+              {e.tag}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Avis client */}
+          <div className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Avis Google</p>
+              <div className="flex gap-0.5">
+                {[1,2,3,4,5].map(s => (
+                  <span key={s} className={`text-sm ${s <= ex.rating ? 'text-amber-400' : 'text-slate-700'}`}>★</span>
+                ))}
+              </div>
+            </div>
+            <p className="text-slate-300 text-sm leading-relaxed mb-4 italic">"{ex.review}"</p>
+            <p className="text-xs text-slate-500">— {ex.author}</p>
+          </div>
+
+          {/* Réponse générée */}
+          <div className="bg-blue-600/5 border border-blue-500/30 rounded-2xl p-6 relative">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs font-semibold text-blue-400 uppercase tracking-wider">Réponse générée par AvisAuto</p>
+              <div className="flex items-center gap-1.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs px-2 py-0.5 rounded-full">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                4s
+              </div>
+            </div>
+            <p className="text-slate-300 text-sm leading-relaxed">{ex.response}</p>
+            <Quote className="absolute bottom-4 right-4 w-6 h-6 text-blue-500/20" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TestimonialsSection() {
+  const testimonials = [
+    {
+      name: "Clément B.",
+      role: "Gérant — Pharmacie",
+      avatar: "C",
+      color: "violet",
+      rating: 5,
+      text: "AvisAuto m'a fait gagner un temps fou. Avant je répondais manuellement à chaque avis, maintenant tout est géré automatiquement. Les réponses sont naturelles, mes clients ne voient pas la différence.",
+    },
+    {
+      name: "Isabelle M.",
+      role: "Directrice — Clinique dentaire",
+      avatar: "I",
+      color: "blue",
+      rating: 5,
+      text: "Résultat visible en 3 semaines : notre note Google est passée de 4,1 à 4,6. Le fait de répondre à tous les avis a clairement amélioré notre image. Je recommande à 100%.",
+    },
+    {
+      name: "Karim T.",
+      role: "Responsable — Restaurant",
+      avatar: "K",
+      color: "emerald",
+      rating: 5,
+      text: "Simple, rapide, efficace. En 10 minutes le compte est créé et les réponses sont déjà générées. Le setup accompagné était vraiment utile pour démarrer sans prise de tête.",
+    },
+  ];
+
+  return (
+    <section className="py-20 px-4 sm:px-6 bg-slate-900/30">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm mb-4">
+            <Star className="w-3.5 h-3.5" fill="currentColor" />
+            Ils nous font confiance
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+            Ce que disent nos clients
+          </h2>
+          <p className="text-slate-400 text-lg">
+            Des établissements de toute taille qui ont transformé leur gestion des avis.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {testimonials.map((t, i) => (
+            <div key={i} className="bg-slate-900/60 border border-slate-700/50 rounded-2xl p-6 hover:border-slate-600/50 transition-all duration-300">
+              <div className="flex gap-0.5 mb-4">
+                {[1,2,3,4,5].map(s => <span key={s} className="text-amber-400 text-sm">★</span>)}
+              </div>
+              <p className="text-slate-300 text-sm leading-relaxed mb-6 italic">"{t.text}"</p>
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
+                  t.color === 'violet' ? 'bg-violet-600/30 text-violet-400' :
+                  t.color === 'blue' ? 'bg-blue-600/30 text-blue-400' :
+                  'bg-emerald-600/30 text-emerald-400'
+                }`}>
+                  {t.avatar}
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-white">{t.name}</p>
+                  <p className="text-xs text-slate-500">{t.role}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Trust badges */}
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm text-slate-500">
+          <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> Sans engagement</div>
+          <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-blue-400" /> Données sécurisées en Europe</div>
+          <div className="flex items-center gap-2"><Zap className="w-4 h-4 text-amber-400" /> Opérationnel en 10 minutes</div>
+          <div className="flex items-center gap-2"><Star className="w-4 h-4 text-violet-400" fill="currentColor" /> Support réactif</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function PricingSection() {
   return (
     <section className="py-20 px-4 sm:px-6 bg-slate-900/30">
@@ -559,6 +740,8 @@ export default function Landing() {
       <HeroSection />
       <StatsSection />
       <FeaturesSection />
+      <ExampleSection />
+      <TestimonialsSection />
       <PricingSection />
       <CTASection />
       <Footer />
