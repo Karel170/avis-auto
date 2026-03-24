@@ -205,7 +205,7 @@ export default function Sidebar({ isOpen, onClose }) {
           </div>
           {/* Support */}
           <a
-            href="mailto:support.avisauto@gmail.com?subject=Demande de support — AvisAuto"
+            href="mailto:support@avisauto.app?subject=Demande de support — AvisAuto"
             className="w-full flex items-center gap-2 px-3 py-2 text-sm text-slate-400 hover:text-blue-400 hover:bg-blue-500/10 rounded-lg transition-all duration-200 mb-1"
           >
             <LifeBuoy className="w-4 h-4" />

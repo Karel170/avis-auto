@@ -441,7 +441,7 @@ export default function Pricing() {
           <p className="text-slate-400 mb-4">
             Une question ?{' '}
             <a
-              href="mailto:support.avisauto@gmail.com"
+              href="mailto:support@avisauto.app"
               className="text-blue-400 hover:text-blue-300 transition-colors"
             >
               Contactez-nous
