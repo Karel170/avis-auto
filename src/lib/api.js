@@ -54,6 +54,10 @@ export const companiesApi = {
   exportCSV: (companyId) =>
     api.get(`/api/companies/${companyId}/reviews/export`, { responseType: 'blob' }),
   analyse: (companyId) => api.post(`/api/companies/${companyId}/analyse`),
+  getTemplates: (companyId) => api.get(`/api/companies/${companyId}/templates`),
+  createTemplate: (companyId, data) => api.post(`/api/companies/${companyId}/templates`, data),
+  updateTemplate: (companyId, templateId, data) => api.put(`/api/companies/${companyId}/templates/${templateId}`, data),
+  deleteTemplate: (companyId, templateId) => api.delete(`/api/companies/${companyId}/templates/${templateId}`),
 };
 
 // Stripe / subscription API

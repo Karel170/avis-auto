@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import {
   Building2, Globe, MapPin, Sparkles, Save, Loader2,
   RefreshCw, Key, Info, CheckCircle, ShieldCheck, Eye, EyeOff,
-  Link2, Link2Off, ChevronDown, Lock
+  Link2, Link2Off, ChevronDown, Lock, FileText, Plus, Trash2, Pencil, X
 } from 'lucide-react';
 
 function NextSyncDate() {
@@ -33,6 +33,186 @@ const syncSteps = [
   'Import en base de données...',
   'Mise à jour des statistiques...',
 ];
+
+function TemplatesSection({ companyId }) {
+  const queryClient = useQueryClient();
+  const [newName, setNewName] = useState('');
+  const [newContent, setNewContent] = useState('');
+  const [editingId, setEditingId] = useState(null);
+  const [editName, setEditName] = useState('');
+  const [editContent, setEditContent] = useState('');
+  const [showForm, setShowForm] = useState(false);
+
+  const { data: templates = [] } = useQuery({
+    queryKey: ['templates', companyId],
+    queryFn: () => companiesApi.getTemplates(companyId).then(r => r.data),
+    enabled: !!companyId,
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data) => companiesApi.createTemplate(companyId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['templates', companyId]);
+      setNewName(''); setNewContent(''); setShowForm(false);
+      toast.success('Template créé !');
+    },
+    onError: () => toast.error('Erreur lors de la création'),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => companiesApi.updateTemplate(companyId, id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['templates', companyId]);
+      setEditingId(null);
+      toast.success('Template mis à jour !');
+    },
+    onError: () => toast.error('Erreur lors de la mise à jour'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => companiesApi.deleteTemplate(companyId, id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['templates', companyId]);
+      toast.success('Template supprimé');
+    },
+    onError: () => toast.error('Erreur lors de la suppression'),
+  });
+
+  const handleCreate = (e) => {
+    e.preventDefault();
+    if (!newName.trim() || !newContent.trim()) return;
+    createMutation.mutate({ name: newName, content: newContent });
+  };
+
+  const handleStartEdit = (t) => {
+    setEditingId(t.id);
+    setEditName(t.name);
+    setEditContent(t.content);
+  };
+
+  const handleSaveEdit = (id) => {
+    if (!editName.trim() || !editContent.trim()) return;
+    updateMutation.mutate({ id, data: { name: editName, content: editContent } });
+  };
+
+  return (
+    <div className="card p-6">
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-2">
+          <FileText className="w-5 h-5 text-blue-400" />
+          <h2 className="text-base font-semibold text-white">Templates de réponses</h2>
+        </div>
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="btn-ghost text-xs py-1.5 px-3"
+        >
+          <Plus className="w-3 h-3" />
+          Nouveau
+        </button>
+      </div>
+      <p className="text-sm text-slate-400 mb-5">
+        Créez des modèles réutilisables à insérer en un clic dans vos réponses.
+      </p>
+
+      {/* Create form */}
+      {showForm && (
+        <form onSubmit={handleCreate} className="mb-5 p-4 bg-slate-800/50 border border-slate-700 rounded-xl space-y-3">
+          <div>
+            <label className="label">Nom du template</label>
+            <input
+              className="input"
+              placeholder="Ex: Réponse avis négatif"
+              value={newName}
+              onChange={e => setNewName(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="label">Contenu</label>
+            <textarea
+              className="input min-h-[100px] resize-y"
+              placeholder="Rédigez votre modèle de réponse..."
+              value={newContent}
+              onChange={e => setNewContent(e.target.value)}
+              required
+            />
+          </div>
+          <div className="flex gap-2 justify-end">
+            <button type="button" onClick={() => setShowForm(false)} className="btn-ghost text-sm">
+              <X className="w-3 h-3" /> Annuler
+            </button>
+            <button type="submit" disabled={createMutation.isPending} className="btn-primary text-sm">
+              {createMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+              Créer
+            </button>
+          </div>
+        </form>
+      )}
+
+      {/* Templates list */}
+      {templates.length === 0 && !showForm ? (
+        <div className="text-center py-8 border border-dashed border-slate-700 rounded-xl">
+          <FileText className="w-8 h-8 text-slate-600 mx-auto mb-2" />
+          <p className="text-slate-500 text-sm">Aucun template pour l'instant</p>
+          <button onClick={() => setShowForm(true)} className="text-blue-400 text-xs mt-1 hover:underline">
+            Créer votre premier template
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {templates.map(t => (
+            <div key={t.id} className="p-4 bg-slate-800/40 border border-slate-700/50 rounded-xl">
+              {editingId === t.id ? (
+                <div className="space-y-3">
+                  <input
+                    className="input text-sm"
+                    value={editName}
+                    onChange={e => setEditName(e.target.value)}
+                  />
+                  <textarea
+                    className="input text-sm min-h-[80px] resize-y"
+                    value={editContent}
+                    onChange={e => setEditContent(e.target.value)}
+                  />
+                  <div className="flex gap-2 justify-end">
+                    <button onClick={() => setEditingId(null)} className="btn-ghost text-xs py-1">
+                      <X className="w-3 h-3" /> Annuler
+                    </button>
+                    <button onClick={() => handleSaveEdit(t.id)} disabled={updateMutation.isPending} className="btn-primary text-xs py-1">
+                      {updateMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />}
+                      Sauvegarder
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-sm font-medium text-slate-200">{t.name}</p>
+                    <div className="flex gap-1">
+                      <button
+                        onClick={() => handleStartEdit(t)}
+                        className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-500 hover:text-blue-400 hover:bg-blue-500/10 transition-all"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => deleteMutation.mutate(t.id)}
+                        className="w-7 h-7 flex items-center justify-center rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-all"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-500 line-clamp-2">{t.content}</p>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Settings() {
   const { company, user, setCompany } = useAuthStore();
@@ -570,6 +750,9 @@ export default function Settings() {
             </div>
           )}
         </div>
+
+        {/* Templates */}
+        <TemplatesSection companyId={company.id} />
 
         {/* Account Info */}
         <div className="card p-6">

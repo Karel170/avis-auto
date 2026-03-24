@@ -5,7 +5,7 @@ import {
   Search, Sparkles, RefreshCw, Loader2, Copy,
   Check, ChevronDown, ChevronUp, Edit2, Send, Star,
   Download, CheckCheck, MessageSquarePlus, X, HelpCircle, ExternalLink,
-  ArrowUpRight, Lock
+  ArrowUpRight, Lock, FileText
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { companiesApi, googleApi } from '../lib/api';
@@ -121,6 +121,43 @@ function UpgradeModal({ message, onClose }) {
   );
 }
 
+function TemplateDropdown({ companyId, onSelect, onClose }) {
+  const { data: templates = [] } = useQuery({
+    queryKey: ['templates', companyId],
+    queryFn: () => companiesApi.getTemplates(companyId).then(r => r.data),
+    enabled: !!companyId,
+  });
+
+  return (
+    <div className="absolute left-0 top-full mt-1 z-20 w-64 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-slate-700/50">
+        <p className="text-xs font-medium text-slate-400">Modèles de réponses</p>
+        <button onClick={onClose} className="text-slate-600 hover:text-slate-400">
+          <X className="w-3.5 h-3.5" />
+        </button>
+      </div>
+      {templates.length === 0 ? (
+        <p className="text-xs text-slate-500 text-center py-4 px-3">
+          Aucun modèle — créez-en dans Paramètres
+        </p>
+      ) : (
+        <div className="max-h-48 overflow-y-auto">
+          {templates.map(t => (
+            <button
+              key={t.id}
+              onClick={() => onSelect(t.content)}
+              className="w-full text-left px-3 py-2.5 hover:bg-slate-800 transition-colors border-b border-slate-700/30 last:border-0"
+            >
+              <p className="text-xs font-medium text-slate-200">{t.name}</p>
+              <p className="text-xs text-slate-500 truncate mt-0.5">{t.content}</p>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ReviewCard({ review, companyId, googleConnected, onLimitReached }) {
   const queryClient = useQueryClient();
   const [expanded, setExpanded] = useState(false);
@@ -131,6 +168,7 @@ function ReviewCard({ review, companyId, googleConnected, onLimitReached }) {
   const [showCustomPrompt, setShowCustomPrompt] = useState(false);
   const [customPrompt, setCustomPrompt] = useState('');
   const [showGuide, setShowGuide] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   const sentiment = getSentimentConfig(review.sentiment);
   const status = getStatusConfig(review.status);
@@ -286,6 +324,30 @@ function ReviewCard({ review, companyId, googleConnected, onLimitReached }) {
             <MessageSquarePlus className="w-3 h-3" />
             Personnaliser
           </button>
+
+          <div className="relative">
+            <button
+              onClick={() => setShowTemplates(!showTemplates)}
+              className={cn('btn-ghost text-xs py-1.5 px-3', showTemplates && 'bg-blue-500/10 text-blue-400')}
+              title="Insérer un template"
+            >
+              <FileText className="w-3 h-3" />
+              Modèles
+            </button>
+            {showTemplates && (
+              <TemplateDropdown
+                companyId={companyId}
+                onSelect={(content) => {
+                  setResponseText(content);
+                  setExpanded(true);
+                  setEditingResponse(true);
+                  setShowTemplates(false);
+                  toast.success('Template inséré');
+                }}
+                onClose={() => setShowTemplates(false)}
+              />
+            )}
+          </div>
 
           {hasResponse && (
             <button onClick={() => setExpanded(!expanded)} className="btn-ghost text-xs py-1.5 px-3 ml-auto">
