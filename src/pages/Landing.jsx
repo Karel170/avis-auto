@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import {
   Star, Zap, MessageSquare, Settings2, SlidersHorizontal,
   RefreshCw, Download, ArrowRight, CheckCircle, Shield, Clock,
-  BarChart3, Sparkles, ChevronRight, ChevronDown, TrendingUp, Bell, Quote
+  BarChart3, Sparkles, ChevronRight, ChevronDown, TrendingUp, Bell
 } from 'lucide-react';
 
 const features = [
@@ -163,22 +163,25 @@ function HeroSection() {
           et améliorez votre réputation en ligne sans effort.
         </p>
 
-        <div className="animate-fade-up-3 flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
+        <div className="animate-fade-up-3 flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
           <Link
             to="/register"
-            className="w-full sm:w-auto btn-primary text-base py-3 px-8 justify-center animate-pulse-ring"
+            className="w-full sm:w-auto btn-primary text-base py-3.5 px-10 justify-center animate-pulse-ring text-lg font-bold shadow-xl shadow-blue-900/40"
           >
             <Sparkles className="w-5 h-5" />
-            S'inscrire gratuitement
+            Tester gratuitement
           </Link>
           <Link
             to="/pricing"
-            className="w-full sm:w-auto btn-secondary text-base py-3 px-8 justify-center"
+            className="w-full sm:w-auto btn-secondary text-base py-3.5 px-8 justify-center"
           >
             Voir les tarifs
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
+        <p className="animate-fade-up-3 text-xs text-slate-500 mb-8">
+          ✓ Sans CB requise &nbsp;·&nbsp; ✓ Sans engagement &nbsp;·&nbsp; ✓ Opérationnel en 10 min
+        </p>
 
         {/* Demo button */}
         <div className="animate-fade-up-4 flex flex-col items-center gap-2 mb-10">
@@ -519,7 +522,7 @@ function ExampleSection() {
               </div>
             </div>
             <p className="text-slate-300 text-sm leading-relaxed">{ex.response}</p>
-            <Quote className="absolute bottom-4 right-4 w-6 h-6 text-blue-500/20" />
+            <MessageSquare className="absolute bottom-4 right-4 w-6 h-6 text-blue-500/10" />
           </div>
         </div>
       </div>
@@ -733,9 +736,23 @@ function Footer() {
   );
 }
 
+function StickyMobileCTA() {
+  return (
+    <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 p-4 bg-slate-950/95 backdrop-blur-md border-t border-slate-800">
+      <Link
+        to="/register"
+        className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3.5 px-6 rounded-xl transition-colors text-base shadow-lg shadow-blue-900/40"
+      >
+        <Sparkles className="w-5 h-5" />
+        Tester gratuitement — Sans CB
+      </Link>
+    </div>
+  );
+}
+
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
+    <div className="min-h-screen bg-slate-950 text-white pb-24 sm:pb-0">
       <NavBar />
       <HeroSection />
       <StatsSection />
@@ -745,6 +762,7 @@ export default function Landing() {
       <PricingSection />
       <CTASection />
       <Footer />
+      <StickyMobileCTA />
     </div>
   );
 }
