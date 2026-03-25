@@ -252,7 +252,7 @@ export default function Pricing() {
                     <span className="text-5xl font-bold text-white">{plan.price}€</span>
                     <span className="text-slate-400 text-sm">/mois</span>
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">HT &middot; Facturation mensuelle &middot; TVA non applicable, art. 293 B du CGI</p>
+                  <p className="text-xs text-slate-500 mt-1">HT &middot; Facturation mensuelle</p>
                 </div>
 
                 <ul className="space-y-2.5 mb-8 flex-1">
@@ -292,6 +292,14 @@ export default function Pricing() {
             );
           })}
         </div>
+
+        {/* Legal note */}
+        <p className="text-center text-xs text-slate-600 -mt-12 mb-16">
+          TVA non applicable, art. 293 B du CGI &middot;{' '}
+          <Link to="/legal" className="hover:text-slate-500 transition-colors">CGU</Link>
+          {' · '}
+          <Link to="/legal" className="hover:text-slate-500 transition-colors">Politique de confidentialité</Link>
+        </p>
 
         {/* Setup accompagné */}
         <div className="mb-16 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-8">
