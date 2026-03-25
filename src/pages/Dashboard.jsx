@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
-  Star, MessageSquare, TrendingUp, Clock, RefreshCw,
+  Star, MessageSquare, TrendingUp, TrendingDown, Clock, RefreshCw,
   Loader2, Sparkles, AlertCircle, ThumbsUp, ThumbsDown, Minus, Shield,
-  CheckCircle2, Circle, Settings, Link2, RotateCcw, Zap
+  CheckCircle2, Circle, Settings, Link2, RotateCcw, Zap, ArrowRight
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import {
@@ -100,37 +100,74 @@ function GettingStarted({ company, stats, onNavigate }) {
   );
 }
 
-function ReputationScore({ score }) {
+function ReputationScore({ score, ratingTrend, averageRating, responseRate }) {
   const color = score >= 70 ? '#22c55e' : score >= 40 ? '#f59e0b' : '#ef4444';
   const label = score >= 70 ? 'Excellente' : score >= 40 ? 'Correcte' : 'À améliorer';
   const circumference = 2 * Math.PI * 40;
   const offset = circumference - (score / 100) * circumference;
+  const trendUp = ratingTrend !== null && ratingTrend > 0;
+  const trendDown = ratingTrend !== null && ratingTrend < 0;
 
   return (
-    <div className="card p-6 flex flex-col items-center justify-center">
-      <div className="flex items-center gap-2 mb-4 self-start">
+    <div className="card p-6">
+      <div className="flex items-center gap-2 mb-4">
         <Shield className="w-5 h-5 text-blue-400" />
         <h3 className="text-base font-semibold text-white">Score de réputation</h3>
+        {ratingTrend !== null && ratingTrend !== 0 && (
+          <span className={`ml-auto flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
+            trendUp ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
+          }`}>
+            {trendUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+            {trendUp ? '+' : ''}{ratingTrend} ce mois
+          </span>
+        )}
       </div>
-      <div className="relative w-28 h-28">
-        <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="40" fill="none" stroke="#1e293b" strokeWidth="10" />
-          <circle
-            cx="50" cy="50" r="40" fill="none"
-            stroke={color} strokeWidth="10"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-            strokeLinecap="round"
-            style={{ transition: 'stroke-dashoffset 1s ease' }}
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-2xl font-bold text-white">{score}</span>
-          <span className="text-xs text-slate-400">/100</span>
+
+      <div className="flex items-center gap-5">
+        <div className="relative w-28 h-28 flex-shrink-0">
+          <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#1e293b" strokeWidth="10" />
+            <circle
+              cx="50" cy="50" r="40" fill="none"
+              stroke={color} strokeWidth="10"
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
+              strokeLinecap="round"
+              style={{ transition: 'stroke-dashoffset 1s ease' }}
+            />
+          </svg>
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-2xl font-bold text-white">{score}</span>
+            <span className="text-xs text-slate-400">/100</span>
+          </div>
+        </div>
+
+        <div className="flex-1 space-y-3 min-w-0">
+          <div>
+            <p className="text-sm font-semibold" style={{ color }}>{label}</p>
+            <p className="text-xs text-slate-500 mt-0.5">Basé sur la note et le taux de réponse</p>
+          </div>
+          {averageRating > 0 && (
+            <div className="flex items-center gap-2">
+              <div className="flex gap-0.5">
+                {[1,2,3,4,5].map(s => (
+                  <Star key={s} className={`w-3.5 h-3.5 ${s <= Math.round(averageRating) ? 'text-amber-400' : 'text-slate-700'}`} fill={s <= Math.round(averageRating) ? 'currentColor' : 'none'} />
+                ))}
+              </div>
+              <span className="text-sm text-slate-300 font-medium">{averageRating}/5</span>
+            </div>
+          )}
+          <div>
+            <div className="flex justify-between text-xs text-slate-500 mb-1">
+              <span>Taux de réponse</span>
+              <span className="text-slate-300 font-medium">{responseRate}%</span>
+            </div>
+            <div className="bg-slate-800 rounded-full h-1.5">
+              <div className="h-1.5 rounded-full bg-blue-500 transition-all duration-700" style={{ width: `${responseRate}%` }} />
+            </div>
+          </div>
         </div>
       </div>
-      <p className="mt-3 text-sm font-medium" style={{ color }}>{label}</p>
-      <p className="text-xs text-slate-500 mt-1 text-center">Basé sur la note et le taux de réponse</p>
     </div>
   );
 }
@@ -305,7 +342,12 @@ export default function Dashboard() {
                 </div>
               </div>
             ))}
-            <ReputationScore score={stats?.reputation_score || 0} />
+            <ReputationScore
+              score={stats?.reputation_score || 0}
+              ratingTrend={stats?.rating_trend ?? null}
+              averageRating={stats?.average_rating || 0}
+              responseRate={stats?.response_rate || 0}
+            />
           </div>
 
           {/* Charts */}
