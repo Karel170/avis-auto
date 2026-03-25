@@ -561,7 +561,7 @@ export default function Settings() {
           </div>
 
           {/* Auto-génération — Pro/Business uniquement */}
-          {(company?.plan === 'pro' || company?.plan === 'business') && (
+          {(company?.plan === 'starter' || company?.plan === 'pro' || company?.plan === 'business') && (
             <div className="flex items-center justify-between p-4 rounded-xl bg-blue-500/5 border border-blue-500/20">
               <div className="flex-1 min-w-0 mr-4">
                 <p className="text-sm font-medium text-white flex items-center gap-2">
