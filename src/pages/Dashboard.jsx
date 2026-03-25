@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import {
   Star, MessageSquare, TrendingUp, TrendingDown, Clock, RefreshCw,
   Loader2, Sparkles, AlertCircle, ThumbsUp, ThumbsDown, Minus, Shield,
@@ -419,6 +419,70 @@ export default function Dashboard() {
               )}
             </div>
           </div>
+
+          {/* Plan usage */}
+          {stats?.usage && (
+            <div className="card p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-blue-400" />
+                  <h3 className="text-base font-semibold text-white">Utilisation du plan</h3>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-slate-700 text-slate-400 capitalize">{stats.plan}</span>
+                </div>
+                {(stats.plan === 'free' || stats.plan === 'starter') && (
+                  <Link to="/subscription" className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                    Upgrader <ArrowRight className="w-3 h-3" />
+                  </Link>
+                )}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[
+                  {
+                    label: 'Avis importés',
+                    current: stats.usage.reviews.current,
+                    limit: stats.usage.reviews.limit,
+                    color: 'blue',
+                  },
+                  {
+                    label: 'Réponses IA ce mois',
+                    current: stats.usage.ai_responses.current,
+                    limit: stats.usage.ai_responses.limit,
+                    color: 'violet',
+                  },
+                ].map(({ label, current, limit, color }) => {
+                  const unlimited = limit === -1;
+                  const pct = unlimited ? 0 : Math.min((current / limit) * 100, 100);
+                  const nearLimit = !unlimited && pct >= 80;
+                  const atLimit = !unlimited && pct >= 100;
+                  return (
+                    <div key={label}>
+                      <div className="flex justify-between text-xs mb-1.5">
+                        <span className="text-slate-400">{label}</span>
+                        <span className={`font-medium ${atLimit ? 'text-red-400' : nearLimit ? 'text-amber-400' : 'text-slate-300'}`}>
+                          {unlimited ? `${current} / ∞` : `${current} / ${limit}`}
+                        </span>
+                      </div>
+                      <div className="bg-slate-800 rounded-full h-2">
+                        <div
+                          className={`h-2 rounded-full transition-all duration-700 ${
+                            atLimit ? 'bg-red-500' : nearLimit ? 'bg-amber-500' :
+                            color === 'blue' ? 'bg-blue-500' : 'bg-violet-500'
+                          }`}
+                          style={{ width: unlimited ? '100%' : `${pct}%`, opacity: unlimited ? 0.2 : 1 }}
+                        />
+                      </div>
+                      {atLimit && (
+                        <p className="text-xs text-red-400 mt-1">Limite atteinte — upgradez pour continuer</p>
+                      )}
+                      {nearLimit && !atLimit && (
+                        <p className="text-xs text-amber-400 mt-1">Bientôt à la limite</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Rating distribution */}
           {ratingDist.length > 0 && (
