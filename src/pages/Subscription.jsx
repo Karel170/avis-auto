@@ -205,9 +205,6 @@ export default function Subscription() {
       <p className="text-center text-xs text-slate-500 mt-6">
         Sans engagement · Annulable à tout moment · Paiement sécurisé par Stripe
       </p>
-      <p className="text-center text-xs text-slate-600 mt-2">
-        TVA non applicable, art. 293 B du CGI
-      </p>
     </div>
   );
 }

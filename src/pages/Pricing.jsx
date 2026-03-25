@@ -376,7 +376,7 @@ export default function Pricing() {
                 { label: 'Réponses automatisées / mois', values: ['20', 'Illimitées', 'Illimitées'] },
                 { label: 'Génération groupée', values: [false, true, true] },
                 { label: 'Export CSV', values: [false, true, true] },
-                { label: 'Publication Google Maps', values: [false, false, true] },
+                { label: 'Publication Google Maps', values: [true, true, true] },
                 { label: 'Synchronisation', values: ['Hebdomadaire', 'Hebdomadaire', 'Temps réel'] },
                 { label: 'Support', values: ['Email', 'Prioritaire', 'Dédié'] },
               ].map((row) => (
