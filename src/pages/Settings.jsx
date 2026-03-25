@@ -4,7 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import {
   Building2, Globe, MapPin, Sparkles, Save, Loader2,
   RefreshCw, Key, Info, CheckCircle, ShieldCheck, Eye, EyeOff,
-  Link2, Link2Off, ChevronDown, Lock, FileText, Plus, Trash2, Pencil, X
+  Link2, Link2Off, ChevronDown, Lock, FileText, Plus, Trash2, Pencil, X, Zap
 } from 'lucide-react';
 
 function NextSyncDate() {
@@ -277,6 +277,7 @@ export default function Settings() {
   const [form, setForm] = useState({
     name: '', sector: '', address: '',
     apify_dataset_url: '', default_tone: 'professional', signature: '',
+    auto_generate: false,
   });
 
   const { data: googleStatus } = useQuery({
@@ -344,6 +345,7 @@ export default function Settings() {
         apify_dataset_url: companyData.apify_dataset_url || '',
         default_tone: companyData.default_tone || 'professional',
         signature: companyData.signature || '',
+        auto_generate: companyData.auto_generate || false,
       });
       setSyncUrl(companyData.apify_dataset_url || '');
     }
@@ -557,6 +559,32 @@ export default function Settings() {
               </div>
             </div>
           </div>
+
+          {/* Auto-génération — Pro/Business uniquement */}
+          {(company?.plan === 'pro' || company?.plan === 'business') && (
+            <div className="flex items-center justify-between p-4 rounded-xl bg-blue-500/5 border border-blue-500/20">
+              <div className="flex-1 min-w-0 mr-4">
+                <p className="text-sm font-medium text-white flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-blue-400" />
+                  Génération automatique des réponses
+                </p>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  À chaque synchronisation, les nouvelles réponses sont générées automatiquement par l'IA.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setForm(f => ({ ...f, auto_generate: !f.auto_generate }))}
+                className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 focus:outline-none ${
+                  form.auto_generate ? 'bg-blue-600' : 'bg-slate-700'
+                }`}
+              >
+                <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ${
+                  form.auto_generate ? 'translate-x-5' : 'translate-x-0'
+                }`} />
+              </button>
+            </div>
+          )}
 
           <div className="flex justify-end">
             <button
