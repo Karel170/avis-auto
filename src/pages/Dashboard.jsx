@@ -484,6 +484,50 @@ export default function Dashboard() {
             </div>
           )}
 
+          {/* Derniers avis */}
+          {stats?.recent_reviews?.length > 0 && (
+            <div className="card p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-blue-400" />
+                  <h3 className="text-base font-semibold text-white">Derniers avis reçus</h3>
+                </div>
+                <button onClick={() => navigate('/reviews')} className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                  Voir tous <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
+              <div className="space-y-3">
+                {stats.recent_reviews.map((review) => {
+                  const stars = review.rating || 0;
+                  const statusColor = review.response_status === 'published' ? 'text-emerald-400 bg-emerald-500/10' :
+                    review.final_text ? 'text-blue-400 bg-blue-500/10' : 'text-amber-400 bg-amber-500/10';
+                  const statusLabel = review.response_status === 'published' ? 'Publié' :
+                    review.final_text ? 'Répondu' : 'En attente';
+                  return (
+                    <div key={review.id} onClick={() => navigate('/reviews')} className="flex items-start gap-3 p-3 rounded-lg hover:bg-slate-800/50 cursor-pointer transition-colors group">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold ${
+                        stars >= 4 ? 'bg-emerald-500/20 text-emerald-400' :
+                        stars === 3 ? 'bg-amber-500/20 text-amber-400' : 'bg-red-500/20 text-red-400'
+                      }`}>
+                        {stars}★
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium text-white truncate">{review.author_name || 'Anonyme'}</p>
+                          <span className={`text-xs px-1.5 py-0.5 rounded-full flex-shrink-0 ${statusColor}`}>{statusLabel}</span>
+                        </div>
+                        {review.text && (
+                          <p className="text-xs text-slate-400 mt-0.5 truncate">{review.text}</p>
+                        )}
+                      </div>
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-600 group-hover:text-slate-400 flex-shrink-0 mt-1 transition-colors" />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Rating distribution */}
           {ratingDist.length > 0 && (
             <div className="card p-6">
