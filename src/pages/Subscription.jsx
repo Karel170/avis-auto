@@ -11,7 +11,7 @@ const plans = [
     price: '29',
     icon: Zap,
     color: 'blue',
-    features: ['50 avis importés', '20 réponses automatisées / mois', 'Import Apify automatique', 'Support par email'],
+    features: ['50 avis importés', '20 réponses automatisées / mois', 'Import Apify automatique', 'Publication Google Maps', 'Support par email'],
   },
   {
     key: 'pro',
@@ -20,7 +20,7 @@ const plans = [
     icon: Star,
     color: 'blue',
     recommended: true,
-    features: ['500 avis importés', 'Réponses automatisées illimitées', 'Génération groupée', 'Export CSV', 'Support prioritaire'],
+    features: ['500 avis importés', 'Réponses automatisées illimitées', 'Génération groupée', 'Export CSV', 'Publication Google Maps', 'Support prioritaire'],
   },
   {
     key: 'business',
