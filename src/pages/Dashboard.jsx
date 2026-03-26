@@ -113,14 +113,6 @@ function ReputationScore({ score, ratingTrend, averageRating, responseRate }) {
       <div className="flex items-center gap-2 mb-4">
         <Shield className="w-5 h-5 text-blue-400" />
         <h3 className="text-base font-semibold text-white">Score de réputation</h3>
-        {ratingTrend !== null && ratingTrend !== 0 && (
-          <span className={`ml-auto flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap ${
-            trendUp ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
-          }`}>
-            {trendUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-            {trendUp ? '+' : ''}{ratingTrend} ce mois
-          </span>
-        )}
       </div>
 
       <div className="flex items-center gap-5">
