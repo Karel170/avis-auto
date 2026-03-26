@@ -114,7 +114,7 @@ function ReputationScore({ score, ratingTrend, averageRating, responseRate }) {
         <Shield className="w-5 h-5 text-blue-400" />
         <h3 className="text-base font-semibold text-white">Score de réputation</h3>
         {ratingTrend !== null && ratingTrend !== 0 && (
-          <span className={`ml-auto flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full ${
+          <span className={`ml-auto flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full whitespace-nowrap ${
             trendUp ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
           }`}>
             {trendUp ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
@@ -124,8 +124,8 @@ function ReputationScore({ score, ratingTrend, averageRating, responseRate }) {
       </div>
 
       <div className="flex items-center gap-5">
-        <div className="relative w-28 h-28 flex-shrink-0">
-          <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+        <div className="relative w-24 h-24 flex-shrink-0">
+          <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
             <circle cx="50" cy="50" r="40" fill="none" stroke="#1e293b" strokeWidth="10" />
             <circle
               cx="50" cy="50" r="40" fill="none"
@@ -142,19 +142,19 @@ function ReputationScore({ score, ratingTrend, averageRating, responseRate }) {
           </div>
         </div>
 
-        <div className="flex-1 space-y-3 min-w-0">
+        <div className="flex-1 space-y-2 overflow-hidden">
           <div>
             <p className="text-sm font-semibold" style={{ color }}>{label}</p>
-            <p className="text-xs text-slate-500 mt-0.5">Basé sur la note et le taux de réponse</p>
+            <p className="text-xs text-slate-500 mt-0.5 leading-tight">Basé sur la note et le taux de réponse</p>
           </div>
           {averageRating > 0 && (
-            <div className="flex items-center gap-2">
-              <div className="flex gap-0.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <div className="flex gap-0.5 flex-shrink-0">
                 {[1,2,3,4,5].map(s => (
                   <Star key={s} className={`w-3.5 h-3.5 ${s <= Math.round(averageRating) ? 'text-amber-400' : 'text-slate-700'}`} fill={s <= Math.round(averageRating) ? 'currentColor' : 'none'} />
                 ))}
               </div>
-              <span className="text-sm text-slate-300 font-medium">{averageRating}/5</span>
+              <span className="text-sm text-slate-300 font-medium flex-shrink-0">{averageRating}/5</span>
             </div>
           )}
           <div>
