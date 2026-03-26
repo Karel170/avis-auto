@@ -134,31 +134,6 @@ function ReputationScore({ score, ratingTrend, averageRating, responseRate }) {
           </div>
         </div>
 
-        <div className="flex-1 space-y-2 overflow-hidden">
-          <div>
-            <p className="text-sm font-semibold" style={{ color }}>{label}</p>
-            <p className="text-xs text-slate-500 mt-0.5 leading-tight">Basé sur la note et le taux de réponse</p>
-          </div>
-          {averageRating > 0 && (
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <div className="flex gap-0.5 flex-shrink-0">
-                {[1,2,3,4,5].map(s => (
-                  <Star key={s} className={`w-3.5 h-3.5 ${s <= Math.round(averageRating) ? 'text-amber-400' : 'text-slate-700'}`} fill={s <= Math.round(averageRating) ? 'currentColor' : 'none'} />
-                ))}
-              </div>
-              <span className="text-sm text-slate-300 font-medium flex-shrink-0">{averageRating}/5</span>
-            </div>
-          )}
-          <div>
-            <div className="flex justify-between text-xs text-slate-500 mb-1">
-              <span>Taux de réponse</span>
-              <span className="text-slate-300 font-medium">{responseRate}%</span>
-            </div>
-            <div className="bg-slate-800 rounded-full h-1.5">
-              <div className="h-1.5 rounded-full bg-blue-500 transition-all duration-700" style={{ width: `${responseRate}%` }} />
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );
