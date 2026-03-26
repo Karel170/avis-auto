@@ -18,6 +18,7 @@ const Pricing = lazy(() => import('./pages/Pricing'));
 const Subscription = lazy(() => import('./pages/Subscription'));
 const Insights = lazy(() => import('./pages/Insights'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 
 function PageLoader() {
   return (
@@ -55,6 +56,7 @@ export default function App() {
         <Route path="/register" element={<PublicOnlyRoute><Register /></PublicOnlyRoute>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
 
         {/* Protected routes */}
         <Route

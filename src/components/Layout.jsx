@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import MobileHeader from './MobileHeader';
+import EmailVerificationBanner from './EmailVerificationBanner';
 import useAuthStore from '../store/authStore';
 import { authApi, companiesApi } from '../lib/api';
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { setCompany, setCompanies, company } = useAuthStore();
+  const { setCompany, setCompanies, company, user } = useAuthStore();
 
   useEffect(() => {
     if (!company) {
@@ -25,14 +26,11 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen bg-slate-950 flex">
-      {/* Mobile header - visible only on mobile */}
       <MobileHeader onMenuClick={() => setSidebarOpen(true)} />
-
-      {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      {/* Main content */}
       <main className="flex-1 lg:ml-[260px] min-h-screen overflow-y-auto pt-14 lg:pt-0">
+        {user && user.email_verified === false && <EmailVerificationBanner />}
         <Outlet />
       </main>
     </div>
