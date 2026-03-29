@@ -5,7 +5,7 @@ import {
   Search, Sparkles, RefreshCw, Loader2, Copy,
   Check, ChevronDown, ChevronUp, Edit2, Send, Star,
   Download, CheckCheck, MessageSquarePlus, X, HelpCircle, ExternalLink,
-  ArrowUpRight, Lock, FileText
+  ArrowUpRight, Lock, FileText, Printer
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { companiesApi, googleApi } from '../lib/api';
@@ -13,6 +13,7 @@ import useAuthStore from '../store/authStore';
 import StarRating from '../components/StarRating';
 import { formatDate, getErrorMessage, getSentimentConfig, getStatusConfig, TONES } from '../lib/utils';
 import { cn } from '../lib/utils';
+import { printReviews } from '../lib/printUtils';
 
 // Check if error is a plan limit 403
 function isLimitError(err) {
@@ -580,6 +581,13 @@ export default function Reviews() {
           <p className="text-slate-400 mt-1">{data?.total || 0} avis · Négatifs en priorité</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
+          <button
+            onClick={() => printReviews(data?.reviews || [], company?.name)}
+            className="btn-ghost"
+            title="Imprimer les avis avec réponses"
+          >
+            <Printer className="w-4 h-4" />Imprimer
+          </button>
           <button onClick={handleExport} className="btn-ghost">
             <Download className="w-4 h-4" />Export CSV
           </button>

@@ -4,12 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import {
   TrendingUp, Loader2, AlertTriangle, Zap, Lock,
   ChevronRight, BarChart2, Lightbulb, Target, Users,
-  Wrench, MessageCircle, Building2, RefreshCw, Trophy, Star, ThumbsUp
+  Wrench, MessageCircle, Building2, RefreshCw, Trophy, Star, ThumbsUp, Printer
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { companiesApi } from '../lib/api';
 import useAuthStore from '../store/authStore';
 import { cn } from '../lib/utils';
+import { printInsights } from '../lib/printUtils';
 
 const SEVERITY_CONFIG = {
   high: { label: 'Critique', color: 'text-red-400', bg: 'bg-red-500/10', border: 'border-red-500/20', dot: 'bg-red-400' },
@@ -175,17 +176,29 @@ export default function Insights() {
             Points forts, problèmes récurrents et plan d'action personnalisé.
           </p>
         </div>
-        <button
-          onClick={() => runAnalysis()}
-          disabled={isPending}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors flex-shrink-0"
-        >
-          {isPending ? (
-            <><Loader2 className="w-4 h-4 animate-spin" /> Analyse en cours…</>
-          ) : (
-            <><RefreshCw className="w-4 h-4" /> {analysis ? 'Relancer l\'analyse' : 'Lancer l\'analyse'}</>
+        <div className="flex items-center gap-2">
+          {analysis && (
+            <button
+              onClick={() => printInsights(analysis, company?.name)}
+              className="flex items-center gap-2 px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white text-sm font-medium rounded-xl transition-colors"
+              title="Imprimer le rapport"
+            >
+              <Printer className="w-4 h-4" />
+              Imprimer
+            </button>
           )}
-        </button>
+          <button
+            onClick={() => runAnalysis()}
+            disabled={isPending}
+            className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors flex-shrink-0"
+          >
+            {isPending ? (
+              <><Loader2 className="w-4 h-4 animate-spin" /> Analyse en cours…</>
+            ) : (
+              <><RefreshCw className="w-4 h-4" /> {analysis ? 'Relancer l\'analyse' : 'Lancer l\'analyse'}</>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Empty state */}
