@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   TrendingUp, Loader2, AlertTriangle, Zap, Lock,
   ChevronRight, BarChart2, Lightbulb, Target, Users,
-  Wrench, MessageCircle, Building2, RefreshCw
+  Wrench, MessageCircle, Building2, RefreshCw, Trophy, Star, ThumbsUp
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { companiesApi } from '../lib/api';
@@ -20,7 +20,7 @@ const SEVERITY_CONFIG = {
 const PRIORITY_CONFIG = {
   urgent: { label: 'Urgent', color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/20' },
   important: { label: 'Important', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/20' },
-  suggéré: { label: 'Suggéré', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
+  'suggéré': { label: 'Suggéré', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/20' },
 };
 
 const CATEGORY_ICONS = {
@@ -30,6 +30,37 @@ const CATEGORY_ICONS = {
   Service: Target,
   Infrastructure: Building2,
 };
+
+function StrengthCard({ strength, index }) {
+  return (
+    <div className="p-4 rounded-xl border bg-emerald-500/5 border-emerald-500/20 hover:border-emerald-500/40 transition-colors">
+      <div className="flex items-start justify-between gap-3 mb-2">
+        <div className="flex items-center gap-2">
+          <span className="text-xl font-black text-emerald-800/60">#{index + 1}</span>
+          <h3 className="text-sm font-semibold text-white">{strength.name}</h3>
+        </div>
+        <span className="text-xs font-bold text-slate-300 bg-slate-800 px-2 py-0.5 rounded-full flex-shrink-0">
+          {strength.count} mentions
+        </span>
+      </div>
+      {strength.highlight && (
+        <p className="text-xs font-medium text-emerald-400 mb-2 flex items-center gap-1">
+          <ThumbsUp className="w-3 h-3 flex-shrink-0" />
+          {strength.highlight}
+        </p>
+      )}
+      {strength.examples && strength.examples.length > 0 && (
+        <div className="space-y-1.5">
+          {strength.examples.slice(0, 2).map((ex, i) => (
+            <p key={i} className="text-xs text-slate-400 italic border-l-2 border-emerald-600/40 pl-2">
+              "{ex}"
+            </p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function ThemeCard({ theme, index }) {
   const config = SEVERITY_CONFIG[theme.severity] || SEVERITY_CONFIG.medium;
@@ -99,10 +130,10 @@ export default function Insights() {
     mutationFn: () => companiesApi.analyse(company.id),
     onSuccess: (res) => {
       setAnalysis(res.data);
-      if (res.data.review_count === 0) {
-        toast('Aucun avis négatif avec commentaire trouvé.', { icon: 'ℹ️' });
+      if (res.data.review_count === 0 && (res.data.positive_count ?? 0) === 0) {
+        toast('Aucun avis avec commentaire trouvé.', { icon: 'ℹ️' });
       } else {
-        toast.success(`Analyse terminée — ${res.data.review_count} avis analysés`);
+        toast.success(`Analyse terminée — ${(res.data.positive_count ?? 0) + (res.data.review_count ?? 0)} avis analysés`);
       }
     },
     onError: () => toast.error('Erreur lors de l\'analyse'),
@@ -117,7 +148,7 @@ export default function Insights() {
           </div>
           <h2 className="text-xl font-bold text-white mb-2">Analyse & Recommandations</h2>
           <p className="text-slate-400 text-sm mb-6 max-w-md mx-auto">
-            Identifiez les thèmes récurrents dans vos avis négatifs et obtenez un plan d'action personnalisé pour améliorer votre service.
+            Identifiez les points forts de votre établissement, les thèmes récurrents dans vos avis négatifs, et obtenez un plan d'action personnalisé.
           </p>
           <button
             onClick={() => navigate('/subscription')}
@@ -141,7 +172,7 @@ export default function Insights() {
             Analyse & Recommandations
           </h1>
           <p className="text-sm text-slate-400 mt-0.5">
-            Identifiez les problèmes récurrents et obtenez un plan d'action personnalisé.
+            Points forts, problèmes récurrents et plan d'action personnalisé.
           </p>
         </div>
         <button
@@ -161,7 +192,10 @@ export default function Insights() {
       {!analysis && !isPending && (
         <div className="text-center py-16 border border-dashed border-slate-700 rounded-2xl">
           <TrendingUp className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-          <p className="text-slate-400 text-sm">Lancez l'analyse pour découvrir les thèmes récurrents<br />dans vos avis négatifs et recevoir des recommandations.</p>
+          <p className="text-slate-400 text-sm">
+            Lancez l'analyse pour découvrir vos points forts,<br />
+            les thèmes récurrents et recevoir des recommandations.
+          </p>
         </div>
       )}
 
@@ -185,18 +219,47 @@ export default function Insights() {
                 <div>
                   <p className="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-1">Résumé</p>
                   <p className="text-sm text-slate-300 leading-relaxed">{analysis.summary}</p>
-                  <p className="text-xs text-slate-500 mt-2">Basé sur {analysis.review_count} avis négatifs analysés</p>
+                  <div className="flex items-center gap-4 mt-2">
+                    {(analysis.positive_count ?? 0) > 0 && (
+                      <p className="text-xs text-emerald-500/80">
+                        {analysis.positive_count} avis positifs analysés
+                      </p>
+                    )}
+                    {(analysis.review_count ?? 0) > 0 && (
+                      <p className="text-xs text-slate-500">
+                        {analysis.review_count} avis négatifs analysés
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Themes */}
+          {/* ✅ Points forts */}
+          {analysis.strengths && analysis.strengths.length > 0 && (
+            <div>
+              <h2 className="text-base font-semibold text-white mb-3 flex items-center gap-2">
+                <Trophy className="w-4 h-4 text-emerald-400" />
+                Points forts de votre établissement
+                <span className="ml-auto text-xs text-emerald-500/70 font-normal flex items-center gap-1">
+                  <Star className="w-3 h-3" /> Ce que vos clients adorent
+                </span>
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {analysis.strengths.map((strength, i) => (
+                  <StrengthCard key={i} strength={strength} index={i} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ⚠️ Thèmes négatifs */}
           {analysis.themes && analysis.themes.length > 0 && (
             <div>
               <h2 className="text-base font-semibold text-white mb-3 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-400" />
-                Thèmes récurrents
+                Thèmes récurrents à améliorer
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {analysis.themes.map((theme, i) => (
@@ -206,7 +269,7 @@ export default function Insights() {
             </div>
           )}
 
-          {/* Recommendations */}
+          {/* 💡 Recommandations */}
           {analysis.recommendations && analysis.recommendations.length > 0 && (
             <div>
               <h2 className="text-base font-semibold text-white mb-3 flex items-center gap-2">
@@ -221,9 +284,9 @@ export default function Insights() {
             </div>
           )}
 
-          {analysis.review_count === 0 && (
+          {analysis.review_count === 0 && (analysis.positive_count ?? 0) === 0 && (
             <div className="text-center py-12 border border-dashed border-slate-700 rounded-2xl">
-              <p className="text-slate-400 text-sm">Aucun avis négatif avec commentaire trouvé.<br />Synchronisez vos avis d'abord.</p>
+              <p className="text-slate-400 text-sm">Aucun avis avec commentaire trouvé.<br />Synchronisez vos avis d'abord.</p>
             </div>
           )}
         </>
