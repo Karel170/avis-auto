@@ -26,7 +26,7 @@ export default function EmailVerificationBanner() {
       <div className="max-w-6xl mx-auto flex items-center gap-3">
         <Mail className="w-4 h-4 text-amber-400 flex-shrink-0" />
         <p className="text-sm text-amber-200 flex-1">
-          Confirmez votre adresse email pour sécuriser votre compte.{' '}
+          Confirmez votre adresse email pour sécuriser votre compte — elle nous permettra également de vous contacter dès que votre espace est prêt.{' '}
           <button
             onClick={handleResend}
             disabled={sending}

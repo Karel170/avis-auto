@@ -302,7 +302,7 @@ export default function Pricing() {
         </p>
 
         {/* Setup accompagné */}
-        <div className="mb-16 rounded-2xl border border-amber-500/30 bg-amber-500/5 p-8">
+        <div className="mb-16 rounded-2xl border border-amber-500/50 bg-amber-500/5 p-8 ring-1 ring-amber-500/20">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="w-14 h-14 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
               <Wrench className="w-7 h-7 text-amber-400" />
@@ -310,10 +310,10 @@ export default function Pricing() {
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <h3 className="text-xl font-bold text-white">Setup accompagné</h3>
-                <span className="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-medium">Option</span>
+                <span className="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2 py-0.5 rounded-full font-medium">Requis</span>
               </div>
               <p className="text-slate-400 text-sm leading-relaxed max-w-xl">
-                Nous configurons AvisAuto pour vous : création du compte Apify, connexion Google Maps, première synchronisation et génération de toutes vos réponses. Vous n'avez rien à faire.
+                Pour activer votre espace, notre équipe prend en charge la configuration complète : création du compte Apify, connexion Google Maps, import de vos avis et génération de toutes vos réponses. Vous n'avez rien à faire.
               </p>
               <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-1.5 text-xs text-slate-400">
                 {['Création compte Apify', 'Configuration dataset Google Maps', 'Première synchronisation', 'Génération de toutes les réponses', 'Formation rapide (30 min)'].map(item => (
