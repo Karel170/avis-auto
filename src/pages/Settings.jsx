@@ -602,77 +602,44 @@ export default function Settings() {
           </div>
         </form>
 
-        {/* Apify Sync */}
+        {/* Apify Sync — géré par l'équipe AvisAuto */}
         <div className="card p-6">
           <div className="flex items-center gap-2 mb-2">
             <Globe className="w-5 h-5 text-blue-400" />
-            <h2 className="text-base font-semibold text-white">Synchronisation Apify</h2>
+            <h2 className="text-base font-semibold text-white">Synchronisation des avis Google</h2>
           </div>
           <p className="text-sm text-slate-400 mb-5">
-            Importez vos avis Google Maps via un dataset Apify.
+            Vos avis Google Maps sont importés et synchronisés automatiquement chaque semaine.
           </p>
 
-          <div className="bg-blue-500/5 border border-blue-500/20 rounded-lg p-4 mb-5">
-            <div className="flex items-start gap-2">
-              <Info className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
-              <div className="text-xs text-slate-400 space-y-1">
-                <p>Utilisez l'acteur <strong className="text-slate-300">Google Maps Reviews Scraper</strong> sur Apify.</p>
-                <p>Copiez l'URL du dataset généré (format: <code className="bg-slate-800 px-1 rounded">https://api.apify.com/v2/datasets/...</code>)</p>
-                <p>La synchronisation automatique s'exécute chaque dimanche à 02h00.</p>
+          <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-5">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-lg bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                <CheckCircle className="w-5 h-5 text-emerald-400" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white mb-1">Pris en charge par notre équipe</p>
+                <p className="text-sm text-slate-400 leading-relaxed">
+                  La configuration Apify, l'import de vos avis Google et la synchronisation automatique sont gérés directement par l'équipe AvisAuto.<br />
+                  Vous n'avez rien à configurer.
+                </p>
+                <div className="mt-3 flex items-center gap-2 text-xs text-slate-500">
+                  <RefreshCw className="w-3 h-3" />
+                  Prochaine synchronisation automatique : <NextSyncDate />
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="space-y-3">
-            <div>
-              <label className="label">URL du dataset Apify</label>
-              <div className="relative">
-                <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
-                <input
-                  type="url"
-                  className="input pl-9"
-                  placeholder="https://api.apify.com/v2/datasets/xxx/items"
-                  value={syncUrl}
-                  onChange={(e) => {
-                    setSyncUrl(e.target.value);
-                    setForm({ ...form, apify_dataset_url: e.target.value });
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                onClick={() => updateMutation.mutate({ apify_dataset_url: syncUrl })}
-                disabled={updateMutation.isPending || syncing}
-                className="btn-secondary"
-              >
-                <Save className="w-4 h-4" />
-                Sauvegarder l'URL
-              </button>
-              <button
-                onClick={handleSync}
-                disabled={syncing}
-                className="btn-primary"
-              >
-                <RefreshCw className="w-4 h-4" />
-                Synchroniser maintenant
-              </button>
-            </div>
+          <div className="mt-4 bg-blue-500/5 border border-blue-500/20 rounded-lg p-4">
+            <p className="text-xs text-slate-400">
+              Une question sur votre synchronisation ?{' '}
+              <a href="mailto:support@avisauto.app" className="text-blue-400 hover:text-blue-300 transition-colors">
+                Contactez-nous
+              </a>{' '}
+              — nous répondons sous 24h.
+            </p>
           </div>
-
-          {companyData?.apify_dataset_url && (
-            <div className="mt-4 space-y-1">
-              <div className="flex items-center gap-2 text-xs text-emerald-400">
-                <CheckCircle className="w-3.5 h-3.5" />
-                URL Apify configurée
-              </div>
-              <div className="flex items-center gap-2 text-xs text-slate-500">
-                <RefreshCw className="w-3 h-3" />
-                Prochaine sync automatique : <NextSyncDate />
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Google Business Integration */}
