@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Star, Mail, Lock, User, Building2, ArrowRight, Loader2 } from 'lucide-react';
+import { Star, Mail, Lock, User, Building2, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { authApi } from '../lib/api';
 import useAuthStore from '../store/authStore';
@@ -11,6 +11,7 @@ export default function Register() {
     name: '', email: '', password: '', companyName: '', sector: '',
   });
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const login = useAuthStore((s) => s.login);
 
@@ -89,14 +90,22 @@ export default function Register() {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
                 <input
-                  type="password"
-                  className="input pl-10"
+                  type={showPassword ? 'text' : 'password'}
+                  className="input pl-10 pr-10"
                   placeholder="8 caractères minimum"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   required
                   minLength={8}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
