@@ -799,7 +799,7 @@ function TestimonialsSection() {
         <div className="mt-12 flex flex-wrap items-center justify-center gap-8 text-sm text-slate-500">
           <div className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-emerald-400" /> Sans engagement</div>
           <div className="flex items-center gap-2"><Shield className="w-4 h-4 text-blue-400" /> Données sécurisées en Europe</div>
-          <div className="flex items-center gap-2"><Zap className="w-4 h-4 text-amber-400" /> Opérationnel en 10 minutes</div>
+          <div className="flex items-center gap-2"><Zap className="w-4 h-4 text-amber-400" /> Opérationnel en 24 heures</div>
           <div className="flex items-center gap-2"><Star className="w-4 h-4 text-violet-400" fill="currentColor" /> Support réactif</div>
         </div>
       </div>
