@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle, Zap, Star, Crown, ArrowRight, ExternalLink } from 'lucide-react';
+import { CheckCircle, Zap, Star, Crown, ArrowRight, ExternalLink, Tag, X } from 'lucide-react';
 import useAuthStore from '../store/authStore';
 import { stripeApi } from '../lib/api';
 
@@ -38,6 +38,9 @@ export default function Subscription() {
   const [loading, setLoading] = useState(true);
   const [checkoutLoading, setCheckoutLoading] = useState(null);
   const [portalLoading, setPortalLoading] = useState(false);
+  const [promoCode, setPromoCode] = useState('');
+  const [promoApplied, setPromoApplied] = useState(false);
+  const [promoError, setPromoError] = useState('');
 
   useEffect(() => {
     if (company?.id) {
@@ -50,11 +53,31 @@ export default function Subscription() {
     }
   }, [company?.id]);
 
+  const VALID_CODES = { 'USPEO': 10 };
+
+  const handleApplyPromo = () => {
+    const code = promoCode.trim().toUpperCase();
+    if (VALID_CODES[code] !== undefined) {
+      setPromoApplied(true);
+      setPromoError('');
+    } else {
+      setPromoError('Code promo invalide.');
+      setPromoApplied(false);
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setPromoCode('');
+    setPromoApplied(false);
+    setPromoError('');
+  };
+
   const handleSubscribe = async (planKey) => {
     if (!company?.id) return;
     setCheckoutLoading(planKey);
     try {
-      const res = await stripeApi.createCheckoutSession({ planId: planKey, company_id: company.id });
+      const code = promoApplied ? promoCode.trim().toUpperCase() : undefined;
+      const res = await stripeApi.createCheckoutSession({ planId: planKey, company_id: company.id, promoCode: code });
       window.location.href = res.data.url;
     } catch (err) {
       alert('Erreur lors de la création de la session de paiement.');
@@ -200,6 +223,49 @@ export default function Subscription() {
             </div>
           );
         })}
+      </div>
+
+      {/* ── Code promo ── */}
+      <div className="mt-8 max-w-sm mx-auto">
+        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1">
+          <Tag className="w-3.5 h-3.5" /> Code promo
+        </p>
+
+        {promoApplied ? (
+          <div className="flex items-center gap-3 px-4 py-3 bg-emerald-500/10 border border-emerald-500/30 rounded-xl">
+            <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-bold text-emerald-400">{promoCode.toUpperCase()} appliqué</p>
+              <p className="text-xs text-slate-400">−10 % sur votre premier mois</p>
+            </div>
+            <button onClick={handleRemovePromo} className="text-slate-500 hover:text-slate-300 transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={promoCode}
+              onChange={(e) => { setPromoCode(e.target.value); setPromoError(''); }}
+              onKeyDown={(e) => e.key === 'Enter' && handleApplyPromo()}
+              placeholder="Entrez votre code"
+              className="input flex-1 uppercase placeholder-normal"
+              style={{ textTransform: 'uppercase' }}
+            />
+            <button
+              onClick={handleApplyPromo}
+              disabled={!promoCode.trim()}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white text-sm font-medium rounded-xl transition-colors"
+            >
+              Appliquer
+            </button>
+          </div>
+        )}
+
+        {promoError && (
+          <p className="text-xs text-red-400 mt-1.5">{promoError}</p>
+        )}
       </div>
 
       <p className="text-center text-xs text-slate-500 mt-6">
