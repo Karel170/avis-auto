@@ -53,7 +53,7 @@ export default function Subscription() {
     }
   }, [company?.id]);
 
-  const VALID_CODES = { 'USPEO': 10 };
+  const VALID_CODES = { 'USPO': 10 };
 
   const handleApplyPromo = () => {
     const code = promoCode.trim().toUpperCase();
