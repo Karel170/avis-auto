@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   TrendingUp, Loader2, AlertTriangle, Zap, Lock,
   ChevronRight, BarChart2, Lightbulb, Target, Users,
-  Wrench, MessageCircle, Building2, RefreshCw, Trophy, Star, ThumbsUp, Printer
+  Wrench, MessageCircle, Building2, RefreshCw, Trophy, Star, ThumbsUp, ThumbsDown, Printer
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { companiesApi } from '../lib/api';
@@ -54,6 +54,37 @@ function StrengthCard({ strength, index }) {
         <div className="space-y-1.5">
           {strength.examples.slice(0, 2).map((ex, i) => (
             <p key={i} className="text-xs text-slate-400 italic border-l-2 border-emerald-600/40 pl-2">
+              "{ex}"
+            </p>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function WeaknessCard({ weakness, index }) {
+  return (
+    <div className="p-4 rounded-xl border bg-red-500/5 border-red-500/20 hover:border-red-500/40 transition-colors">
+      <div className="flex items-start justify-between gap-3 mb-2">
+        <div className="flex items-center gap-2">
+          <span className="text-xl font-black text-red-800/60">#{index + 1}</span>
+          <h3 className="text-sm font-semibold text-white">{weakness.name}</h3>
+        </div>
+        <span className="text-xs font-bold text-slate-300 bg-slate-800 px-2 py-0.5 rounded-full flex-shrink-0">
+          {weakness.count} mentions
+        </span>
+      </div>
+      {weakness.highlight && (
+        <p className="text-xs font-medium text-red-400 mb-2 flex items-center gap-1">
+          <ThumbsDown className="w-3 h-3 flex-shrink-0" />
+          {weakness.highlight}
+        </p>
+      )}
+      {weakness.examples && weakness.examples.length > 0 && (
+        <div className="space-y-1.5">
+          {weakness.examples.slice(0, 2).map((ex, i) => (
+            <p key={i} className="text-xs text-slate-400 italic border-l-2 border-red-600/40 pl-2">
               "{ex}"
             </p>
           ))}
@@ -249,20 +280,44 @@ export default function Insights() {
             </div>
           )}
 
-          {/* ✅ Points forts */}
-          {analysis.strengths && analysis.strengths.length > 0 && (
+          {/* ✅ Ce qui ressort le plus */}
+          {((analysis.strengths && analysis.strengths.length > 0) || (analysis.weaknesses && analysis.weaknesses.length > 0)) && (
             <div>
-              <h2 className="text-base font-semibold text-white mb-3 flex items-center gap-2">
-                <Trophy className="w-4 h-4 text-emerald-400" />
-                Points forts de votre établissement
-                <span className="ml-auto text-xs text-emerald-500/70 font-normal flex items-center gap-1">
-                  <Star className="w-3 h-3" /> Ce que vos clients adorent
-                </span>
+              <h2 className="text-base font-semibold text-white mb-4 flex items-center gap-2">
+                <Star className="w-4 h-4 text-slate-400" />
+                Ce qui ressort le plus de vos avis
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {analysis.strengths.map((strength, i) => (
-                  <StrengthCard key={i} strength={strength} index={i} />
-                ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Points forts */}
+                {analysis.strengths && analysis.strengths.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-emerald-400 mb-3 flex items-center gap-2">
+                      <Trophy className="w-4 h-4" />
+                      Points forts
+                      <span className="text-xs text-emerald-500/60 font-normal">— ce que vos clients adorent</span>
+                    </h3>
+                    <div className="space-y-3">
+                      {analysis.strengths.map((strength, i) => (
+                        <StrengthCard key={i} strength={strength} index={i} />
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {/* Points faibles */}
+                {analysis.weaknesses && analysis.weaknesses.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-red-400 mb-3 flex items-center gap-2">
+                      <AlertTriangle className="w-4 h-4" />
+                      Points faibles
+                      <span className="text-xs text-red-500/60 font-normal">— ce qui déçoit vos clients</span>
+                    </h3>
+                    <div className="space-y-3">
+                      {analysis.weaknesses.map((weakness, i) => (
+                        <WeaknessCard key={i} weakness={weakness} index={i} />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}

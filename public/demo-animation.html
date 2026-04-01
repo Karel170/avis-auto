@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AvisAuto Demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .demo-wrapper {
+    width: 520px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+  }
+
+  /* Header */
+  .demo-header {
+    background: #0f172a;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #1e293b;
+  }
+
+  .logo-icon {
+    width: 28px; height: 28px;
+    background: #3b82f6;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+
+  .logo-text { color: #fff; font-weight: 700; font-size: 15px; }
+
+  .badge {
+    margin-left: auto;
+    background: #1e3a5f;
+    color: #60a5fa;
+    border: 1px solid #1d4ed8;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* Body */
+  .demo-body { padding: 20px; }
+
+  /* Review card */
+  .review-card {
+    background: #0f172a;
+    border: 1px solid #334155;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.5s, transform 0.5s;
+  }
+  .review-card.visible { opacity: 1; transform: translateY(0); }
+
+  .reviewer-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .avatar {
+    width: 34px; height: 34px;
+    background: rgba(239,68,68,0.2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    color: #f87171;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .reviewer-name { color: #e2e8f0; font-weight: 600; font-size: 13px; }
+  .stars { color: #f59e0b; font-size: 13px; margin-top: 2px; letter-spacing: 1px; }
+  .stars .empty { color: #1e293b; }
+
+  .neg-badge {
+    margin-left: auto;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.3);
+    color: #f87171;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .review-text {
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .review-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #1e293b;
+  }
+
+  .style-tag {
+    background: #0f172a;
+    border: 1px solid #334155;
+    color: #94a3b8;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 11px;
+  }
+
+  .btn-generate {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    background: #3b82f6;
+    color: #fff;
+    box-shadow: 0 0 0 0 rgba(59,130,246,0.4);
+  }
+
+  .btn-generate.pulse {
+    animation: pulse-ring 1.5s ease-in-out infinite;
+  }
+
+  .btn-generate.loading {
+    background: rgba(59,130,246,0.6);
+    transform: scale(0.96);
+    box-shadow: none;
+    animation: none;
+  }
+
+  .btn-generate.done {
+    background: #475569;
+    color: #94a3b8;
+    box-shadow: none;
+    animation: none;
+  }
+
+  @keyframes pulse-ring {
+    0%   { box-shadow: 0 0 0 0 rgba(59,130,246,0.5); }
+    70%  { box-shadow: 0 0 0 8px rgba(59,130,246,0); }
+    100% { box-shadow: 0 0 0 0 rgba(59,130,246,0); }
+  }
+
+  /* Spinner */
+  .spinner {
+    width: 12px; height: 12px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* AI Response box */
+  .response-box {
+    background: rgba(15,23,42,0.6);
+    border: 1px solid rgba(59,130,246,0.3);
+    border-radius: 14px;
+    padding: 16px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.4s, transform 0.4s, background 0.5s, border-color 0.5s;
+  }
+  .response-box.visible { opacity: 1; transform: translateY(0); }
+  .response-box.published {
+    background: rgba(16,185,129,0.05);
+    border-color: rgba(16,185,129,0.3);
+  }
+
+  .response-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .spark-icon { color: #60a5fa; font-size: 14px; }
+  .response-label { color: #60a5fa; font-size: 11px; font-weight: 600; }
+
+  .published-badge {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(16,185,129,0.1);
+    border: 1px solid rgba(16,185,129,0.3);
+    color: #34d399;
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .published-badge.visible { opacity: 1; }
+
+  .response-text {
+    color: #cbd5e1;
+    font-size: 13px;
+    line-height: 1.65;
+    min-height: 20px;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    background: #3b82f6;
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 0.8s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Publish button */
+  .btn-publish {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #10b981;
+    color: #fff;
+    border: none;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #1e293b;
+    width: 100%;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.3s, transform 0.3s;
+    animation: pulse-green 1.5s ease-in-out infinite;
+  }
+  .btn-publish.visible { opacity: 1; transform: translateY(0); }
+  .btn-publish.hidden { display: none; }
+
+  @keyframes pulse-green {
+    0%   { box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+    70%  { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+    100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+  }
+
+  /* Google icon */
+  .g-icon { font-size: 13px; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="demo-wrapper">
+  <!-- Header -->
+  <div class="demo-header">
+    <div class="logo-icon">★</div>
+    <span class="logo-text">AvisAuto</span>
+    <span class="badge">IA activée</span>
+  </div>
+
+  <!-- Body -->
+  <div class="demo-body">
+
+    <!-- Review Card -->
+    <div class="review-card" id="reviewCard">
+      <div class="reviewer-row">
+        <div class="avatar">M</div>
+        <div>
+          <div class="reviewer-name">Marie D.</div>
+          <div class="stars">★<span class="empty">★★★★</span></div>
+        </div>
+        <span class="neg-badge">Négatif</span>
+      </div>
+      <p class="review-text">"Temps d'attente bien trop long, personnel peu aimable. Je ne reviendrai pas de sitôt."</p>
+      <div class="review-actions">
+        <span class="style-tag">Professionnel</span>
+        <button class="btn-generate pulse" id="btnGenerate">
+          <span id="btnIcon">✦</span>
+          <span id="btnText">Générer</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- AI Response -->
+    <div class="response-box" id="responseBox">
+      <div class="response-header">
+        <span class="spark-icon">✦</span>
+        <span class="response-label">Réponse générée par IA</span>
+        <span class="published-badge" id="publishedBadge">✓ Publié sur Google Maps</span>
+      </div>
+      <p class="response-text" id="responseText"><span class="cursor" id="cursor"></span></p>
+      <button class="btn-publish" id="btnPublish">
+        <span class="g-icon">G</span>
+        Publier sur Google Maps
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const RESPONSE_TEXT = "Bonjour Marie, nous vous présentons toutes nos excuses pour votre attente et l'accueil que vous avez reçu. Votre retour est précieux — nous travaillons chaque jour à améliorer notre service. Nous espérons vous revoir bientôt pour vous offrir l'expérience que vous méritez. — L'équipe Pharmacie Clément";
+
+let step = 0;
+let charIndex = 0;
+let loopTimeout = null;
+
+function runAnimation() {
+  // Step 0: Show review card
+  step = 0;
+  charIndex = 0;
+
+  const reviewCard = document.getElementById('reviewCard');
+  const responseBox = document.getElementById('responseBox');
+  const btnGenerate = document.getElementById('btnGenerate');
+  const btnIcon = document.getElementById('btnIcon');
+  const btnText = document.getElementById('btnText');
+  const responseText = document.getElementById('responseText');
+  const cursor = document.getElementById('cursor');
+  const btnPublish = document.getElementById('btnPublish');
+  const publishedBadge = document.getElementById('publishedBadge');
+
+  // Reset
+  reviewCard.classList.remove('visible');
+  responseBox.classList.remove('visible', 'published');
+  btnGenerate.className = 'btn-generate pulse';
+  btnIcon.textContent = '✦';
+  btnText.textContent = 'Générer';
+  responseText.innerHTML = '<span class="cursor" id="cursor"></span>';
+  btnPublish.className = 'btn-publish';
+  publishedBadge.classList.remove('visible');
+
+  // Show review card
+  setTimeout(() => {
+    reviewCard.classList.add('visible');
+  }, 300);
+
+  // Step 1: Loading
+  setTimeout(() => {
+    btnGenerate.className = 'btn-generate loading';
+    btnIcon.innerHTML = '<div class="spinner"></div>';
+    btnText.textContent = 'Génération...';
+  }, 2000);
+
+  // Step 2: Show response box + typewriter
+  setTimeout(() => {
+    responseBox.classList.add('visible');
+    responseText.innerHTML = '<span class="cursor" id="cursor"></span>';
+
+    let i = 0;
+    const typeInterval = setInterval(() => {
+      if (i < RESPONSE_TEXT.length) {
+        const cursorEl = document.getElementById('cursor');
+        if (cursorEl) cursorEl.remove();
+        responseText.textContent = RESPONSE_TEXT.substring(0, i + 1);
+        responseText.innerHTML += '<span class="cursor" id="cursor"></span>';
+        i++;
+      } else {
+        clearInterval(typeInterval);
+
+        // Remove cursor
+        setTimeout(() => {
+          const cursorEl = document.getElementById('cursor');
+          if (cursorEl) cursorEl.remove();
+
+          // Show publish button
+          btnGenerate.className = 'btn-generate done';
+          btnIcon.textContent = '✦';
+          btnText.textContent = 'Regénérer';
+          btnPublish.classList.add('visible');
+
+          // Step 3: Published
+          setTimeout(() => {
+            btnPublish.classList.add('hidden');
+            responseBox.classList.add('published');
+            publishedBadge.classList.add('visible');
+
+            // Loop after pause
+            setTimeout(() => {
+              runAnimation();
+            }, 3000);
+
+          }, 2000);
+
+        }, 400);
+      }
+    }, 18);
+
+  }, 3800);
+}
+
+// Start on load
+window.addEventListener('load', () => {
+  setTimeout(runAnimation, 500);
+});
+</script>
+</body>
+</html>

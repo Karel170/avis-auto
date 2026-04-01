@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "avisauto-frontend",
-      "runtimeExecutable": "node_modules/.bin/vite",
-      "runtimeArgs": ["--port", "5173"],
+      "name": "frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "port": 5173
     }
   ]
