@@ -41,6 +41,7 @@ export const companiesApi = {
   get: (id) => api.get(`/api/companies/${id}`),
   update: (id, data) => api.put(`/api/companies/${id}`, data),
   sync: (id, data) => api.post(`/api/companies/${id}/sync`, data),
+  syncTripAdvisor: (id, data) => api.post(`/api/companies/${id}/sync-tripadvisor`, data),
   getStats: (id) => api.get(`/api/companies/${id}/stats`),
   getReviews: (id, params) => api.get(`/api/companies/${id}/reviews`, { params }),
   generateResponse: (companyId, reviewId, data) =>

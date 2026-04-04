@@ -276,9 +276,10 @@ export default function Settings() {
 
   const [form, setForm] = useState({
     name: '', sector: '', address: '',
-    apify_dataset_url: '', default_tone: 'professional', signature: '',
+    apify_dataset_url: '', tripadvisor_dataset_url: '', default_tone: 'professional', signature: '',
     auto_generate: false,
   });
+  const [syncingTA, setSyncingTA] = useState(false);
 
   const { data: googleStatus } = useQuery({
     queryKey: ['google-status', company?.id],
@@ -343,6 +344,7 @@ export default function Settings() {
         sector: companyData.sector || '',
         address: companyData.address || '',
         apify_dataset_url: companyData.apify_dataset_url || '',
+        tripadvisor_dataset_url: companyData.tripadvisor_dataset_url || '',
         default_tone: companyData.default_tone || 'professional',
         signature: companyData.signature || '',
         auto_generate: companyData.auto_generate || false,
@@ -397,6 +399,25 @@ export default function Settings() {
     } finally {
       setSyncing(false);
       setSyncStep(0);
+    }
+  };
+
+  const handleSyncTripAdvisor = async () => {
+    const url = form.tripadvisor_dataset_url;
+    if (!url) {
+      toast.error('Entrez une URL dataset TripAdvisor (Apify)');
+      return;
+    }
+    setSyncingTA(true);
+    try {
+      const res = await companiesApi.syncTripAdvisor(company.id, { tripadvisor_dataset_url: url });
+      toast.success(`✅ TripAdvisor — ${res.data.imported} avis importés, ${res.data.skipped} ignorés`);
+      queryClient.invalidateQueries(['reviews', company.id]);
+      queryClient.invalidateQueries(['stats', company.id]);
+    } catch (err) {
+      toast.error(getErrorMessage(err));
+    } finally {
+      setSyncingTA(false);
     }
   };
 
@@ -639,6 +660,67 @@ export default function Settings() {
               </a>{' '}
               — nous répondons sous 24h.
             </p>
+          </div>
+        </div>
+
+        {/* TripAdvisor Sync */}
+        <div className="card p-6">
+          <div className="flex items-center gap-2 mb-2">
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="11" fill="#00AF87"/>
+              <circle cx="7.5" cy="12" r="2.5" fill="white"/>
+              <circle cx="16.5" cy="12" r="2.5" fill="white"/>
+              <circle cx="7.5" cy="12" r="1.2" fill="#00AF87"/>
+              <circle cx="16.5" cy="12" r="1.2" fill="#00AF87"/>
+              <path d="M4 9.5C5.2 7.5 8 6 12 6s6.8 1.5 8 3.5" stroke="white" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+            <h2 className="text-base font-semibold text-white">Synchronisation TripAdvisor</h2>
+          </div>
+          <p className="text-sm text-slate-400 mb-5">
+            Importez vos avis TripAdvisor via un dataset Apify pour les gérer au même endroit que vos avis Google.
+          </p>
+
+          <div className="space-y-4">
+            <div>
+              <label className="label">URL du dataset Apify (TripAdvisor)</label>
+              <div className="relative">
+                <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+                <input
+                  type="url"
+                  className="input pl-9"
+                  placeholder="https://api.apify.com/v2/datasets/..."
+                  value={form.tripadvisor_dataset_url}
+                  onChange={(e) => setForm({ ...form, tripadvisor_dataset_url: e.target.value })}
+                />
+              </div>
+              <p className="text-xs text-slate-500 mt-1.5">
+                Lancez le scraper <span className="text-slate-300 font-medium">maxcopell/tripadvisor-reviews</span> sur Apify avec l'URL de votre fiche TripAdvisor, puis collez l'URL du dataset ici.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between gap-4">
+              <button
+                type="button"
+                onClick={() => updateMutation.mutate({ tripadvisor_dataset_url: form.tripadvisor_dataset_url })}
+                disabled={updateMutation.isPending}
+                className="btn-ghost text-sm"
+              >
+                <Save className="w-4 h-4" />
+                Sauvegarder l'URL
+              </button>
+              <button
+                type="button"
+                onClick={handleSyncTripAdvisor}
+                disabled={syncingTA || !form.tripadvisor_dataset_url}
+                className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-xl transition-colors"
+              >
+                {syncingTA ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Synchronisation...</>
+                ) : (
+                  <><RefreshCw className="w-4 h-4" /> Synchroniser TripAdvisor</>
+                )}
+              </button>
+            </div>
           </div>
         </div>
 

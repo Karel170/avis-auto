@@ -279,6 +279,11 @@ function ReviewCard({ review, companyId, googleConnected, onLimitReached }) {
               <p className="font-medium text-slate-200 text-sm truncate">{review.author_name || 'Anonyme'}</p>
               {/* Badges à droite du nom */}
               <div className="flex items-center gap-1.5 flex-shrink-0">
+                {review.source === 'tripadvisor' ? (
+                  <span className="badge border text-xs bg-emerald-500/10 text-emerald-400 border-emerald-500/20">TripAdvisor</span>
+                ) : (
+                  <span className="badge border text-xs bg-blue-500/10 text-blue-400 border-blue-500/20">Google</span>
+                )}
                 <span className={cn('badge border text-xs', sentiment.bg)}>{sentiment.label}</span>
                 <span className={cn('badge border text-xs', status.bg)}>{status.label}</span>
               </div>
